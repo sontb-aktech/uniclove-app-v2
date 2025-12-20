@@ -1,0 +1,30 @@
+import { PreloadableComponent } from 'utils/lazyWithPreload';
+
+export { default as HomeScreen } from './home/HomeScreen';
+export { default as SplashScreen } from './splash/SplashScreen';
+export { default as LoginScreen } from './auth/LoginScreen';
+export { default as MainTabScreen } from './main/MainTabScreen';
+export { default as SettingsScreen } from './setting/SettingsScreen';
+export { default as OnboardingScreen } from './onboarding/OnboardingScreen';
+export { default as LanguageScreen } from './language/LanguageScreen';
+export { default as PasswordScreen } from './auth/PasswordScreen';
+export { default as VerifyOtpScreen } from './auth/VerifyOtpScreen';
+export { default as CompleteProfileScreen } from './auth/CompleteProfileScreen';
+export { default as CreatePasswordScreen } from './auth/CreatePasswordScreen';
+export { default as CompletePictureProfileScreen } from './auth/CompletePictureProfileScreen';
+export type RootStackParamList = {
+  ToolsScreen: undefined;
+  HomeScreen: undefined;
+  SplashScreen: undefined;
+  LoginScreen: { disableBack?: boolean };
+  MainTabScreen: { trackingLogin?: boolean; isFirstOpen?: boolean };
+  SettingsScreen: undefined;
+  FriendRequestScreen: undefined;
+  OnboardingScreen: undefined;
+  LanguageScreen: undefined;
+  PasswordScreen: undefined;
+  VerifyOtpScreen: { phone: string };
+  CompleteProfileScreen: undefined;
+  CreatePasswordScreen: undefined;
+  CompletePictureProfileScreen: undefined;
+};

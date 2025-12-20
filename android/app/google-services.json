@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "904842608857",
+    "project_id": "loopie-bot",
+    "storage_bucket": "loopie-bot.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904842608857:android:7a7859f51469717c607ec8",
+        "android_client_info": {
+          "package_name": "com.aktech.uniclove"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "904842608857-holcj578cj9dn9dksepsbsn2e5j76jkv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aktech.uniclove",
+            "certificate_hash": "23b7a0df1c7816bde40143a55ae55056862fe22e"
+          }
+        },
+        {
+          "client_id": "904842608857-oeqk29344r0l1j7r655a0epl68dc5ujp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aktech.uniclove",
+            "certificate_hash": "37d65cea8407079d61fce7eeae9cbef2039ca174"
+          }
+        },
+        {
+          "client_id": "904842608857-54umjclm3m5qmf6lkon9ct2h3st8qttf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw_przrWD-Jew0X1nhrx0aTSjErm5Hglw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "904842608857-54umjclm3m5qmf6lkon9ct2h3st8qttf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "904842608857-vo1vfn9fkcu60qbpaq4kfgkrvm07s9jo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.aios.loopie"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "ChatAIApp",
+  "displayName": "ChatAIApp",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-5478191690154275~9115504585",
+    "ios_app_id": "ca-app-pub-5478191690154275~9115504585"
+  }
+}

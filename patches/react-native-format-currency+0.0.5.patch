@@ -1,0 +1,15 @@
+diff --git a/node_modules/react-native-format-currency/dist/index.js b/node_modules/react-native-format-currency/dist/index.js
+index 705e3f1..648c1c8 100644
+--- a/node_modules/react-native-format-currency/dist/index.js
++++ b/node_modules/react-native-format-currency/dist/index.js
+@@ -4,9 +4,7 @@ exports.getSupportedCurrencies = exports.formatCurrency = void 0;
+ var formatCurrency = function (_a) {
+     var amount = _a.amount, code = _a.code;
+     var commaFormatted = String(amount).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+-    var periodFormatted = String(amount)
+-        .replace(".", ",")
+-        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
++    var periodFormatted = commaFormatted;
+     var switchOptions = {
+         // argentine peso (ex: $ 1.234,56)
+         ARS: ["$ ".concat(periodFormatted), "".concat(periodFormatted), "$"],

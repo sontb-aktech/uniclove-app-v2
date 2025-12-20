@@ -1,0 +1,4 @@
+dịch sang các ngôn ngữ sau, giữ nguyên cấu trúc: Afrikaans (af), Bengal (bn), Deutsch (de), English (en), Spanish (es), France (fr), Hindi (hi), Indonesian (in), Japanese (ja), Korean (ko), Portugal (pt), Russian (ru), Vietnamese (vi), China (zh): 
+"name": {
+      "en": "Snowfall Emotions"
+    }

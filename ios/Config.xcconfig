@@ -1,0 +1,10 @@
+//
+//  Config.xcconfig
+//  app30shine
+//
+//  Created by Son Truong on 20/12/2021.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+#include? "tmp.xcconfig"

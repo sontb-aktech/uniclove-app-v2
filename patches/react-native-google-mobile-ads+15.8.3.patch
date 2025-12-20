@@ -1,0 +1,195 @@
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsEvent.java b/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsEvent.java
+index e3296b4..ac47dcc 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsEvent.java
++++ b/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsEvent.java
+@@ -36,6 +36,7 @@ public class ReactNativeGoogleMobileAdsEvent implements NativeEvent {
+   public static final String GOOGLE_MOBILE_ADS_EVENT_CLICKED = "clicked";
+   public static final String GOOGLE_MOBILE_ADS_EVENT_CLOSED = "closed";
+   public static final String GOOGLE_MOBILE_ADS_EVENT_APP_EVENT = "app_event";
++  public static final String GOOGLE_MOBILE_ADS_EVENT_IMPRESSION = "impression";
+ 
+   public static final String GOOGLE_MOBILE_ADS_EVENT_REWARDED_LOADED = "rewarded_loaded";
+   public static final String GOOGLE_MOBILE_ADS_EVENT_REWARDED_EARNED_REWARD =
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt b/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt
+index 75cd58f..441e2ad 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt
++++ b/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt
+@@ -225,6 +225,7 @@ abstract class ReactNativeGoogleMobileAdsFullScreenAdModule<T>(
+ 
+             override fun onAdImpression() {
+               // Not Implemented Yet
++              sendAdEvent(ReactNativeGoogleMobileAdsEvent.GOOGLE_MOBILE_ADS_EVENT_IMPRESSION)
+             }
+ 
+             private fun sendAdEvent(type: String) {
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt b/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
+index 6e70fdd..fe814e8 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
++++ b/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
+@@ -25,11 +25,13 @@ import com.facebook.react.bridge.ReadableMap
+ import com.facebook.react.module.annotations.ReactModule
+ import com.google.android.gms.ads.AdListener
+ import com.google.android.gms.ads.AdLoader
++import com.google.android.gms.ads.LoadAdError
+ import com.google.android.gms.ads.MediaAspectRatio
+ import com.google.android.gms.ads.VideoController.VideoLifecycleCallbacks
+ import com.google.android.gms.ads.VideoOptions
+ import com.google.android.gms.ads.nativead.NativeAd
+ import com.google.android.gms.ads.nativead.NativeAdOptions
++import java.util.concurrent.atomic.AtomicBoolean
+ 
+ @ReactModule(ReactNativeGoogleMobileAdsNativeModule.NAME)
+ class ReactNativeGoogleMobileAdsNativeModule(
+@@ -42,7 +44,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+   @ReactMethod
+   override fun load(adUnitId: String, requestOptions: ReadableMap, promise: Promise) {
+     val holder = NativeAdHolder(adUnitId, requestOptions)
+-    holder.loadAd { nativeAd ->
++    holder.loadAd(promise) { nativeAd ->
+       val responseId = nativeAd.responseInfo?.responseId ?: return@loadAd
+       adHolders[responseId] = holder
+ 
+@@ -101,6 +103,12 @@ class ReactNativeGoogleMobileAdsNativeModule(
+     var nativeAd: NativeAd? = null
+       private set
+ 
++    // Promise used to reject when load fails
++    private var loadPromise: Promise? = null
++
++    // Ensure we only resolve OR reject once
++    private val isSettled = AtomicBoolean(false)
++
+     private val adListener: AdListener = object : AdListener() {
+       override fun onAdImpression() {
+         emitAdEvent("impression")
+@@ -117,6 +125,15 @@ class ReactNativeGoogleMobileAdsNativeModule(
+       override fun onAdClosed() {
+         emitAdEvent("closed")
+       }
++
++      override fun onAdFailedToLoad(loadAdError: LoadAdError) {
++        // If promise present, reject it (only once)
++        val p = loadPromise ?: return
++        if (isSettled.compareAndSet(false, true)) {
++          p.reject("E_AD_LOAD_FAILED", loadAdError.message)
++          loadPromise = null
++        }
++      }
+     }
+ 
+     private val videoLifecycleCallbacks: VideoLifecycleCallbacks = object : VideoLifecycleCallbacks() {
+@@ -141,7 +158,10 @@ class ReactNativeGoogleMobileAdsNativeModule(
+       }
+     }
+ 
+-    fun loadAd(loadedListener: NativeAd.OnNativeAdLoadedListener) {
++    fun loadAd(promise: Promise, loadedListener: NativeAd.OnNativeAdLoadedListener) {
++      // store the promise so adListener can reject on failure
++      this.loadPromise = promise
++
+       val mediaAspectRatio = if (requestOptions.hasKey("aspectRatio")) {
+         when (requestOptions.getInt("aspectRatio")) {
+           1 -> MediaAspectRatio.ANY
+@@ -182,16 +202,29 @@ class ReactNativeGoogleMobileAdsNativeModule(
+         .withNativeAdOptions(nativeAdOptions)
+         .withAdListener(adListener)
+         .forNativeAd { nativeAd ->
+-          this.nativeAd = nativeAd
+-          nativeAd.mediaContent?.videoController?.videoLifecycleCallbacks = videoLifecycleCallbacks
+-          nativeAd.setOnPaidEventListener { adValue ->
+-            val revenueData = Arguments.createMap()
+-            revenueData.putDouble("value", 1e-6 * adValue.valueMicros)
+-            revenueData.putInt("precision", adValue.precisionType)
+-            revenueData.putString("currency", adValue.currencyCode)
+-            emitAdEvent("paid", revenueData)
++          // only settle once (either success -> resolve via loadedListener, or failure -> promise rejected earlier)
++          if (isSettled.compareAndSet(false, true)) {
++            this.nativeAd = nativeAd
++            nativeAd.mediaContent?.videoController?.videoLifecycleCallbacks = videoLifecycleCallbacks
++            nativeAd.setOnPaidEventListener { adValue ->
++              val revenueData = Arguments.createMap()
++              revenueData.putDouble("value", 1e-6 * adValue.valueMicros)
++              revenueData.putInt("precision", adValue.precisionType)
++              revenueData.putString("currency", adValue.currencyCode)
++              emitAdEvent("paid", revenueData)
++            }
++            // notify caller that ad loaded (caller typically resolves the promise)
++            loadedListener.onNativeAdLoaded(nativeAd)
++            // clear stored promise reference
++            loadPromise = null
++          } else {
++            // already settled (likely rejected) — destroy the loaded ad to avoid leaks
++            try {
++              nativeAd.destroy()
++            } catch (e: Exception) {
++              // ignore
++            }
+           }
+-          loadedListener.onNativeAdLoaded(nativeAd)
+         }
+         .build()
+       val adRequest = ReactNativeGoogleMobileAdsCommon.buildAdRequest(requestOptions)
+diff --git a/node_modules/react-native-google-mobile-ads/lib/typescript/NativeAdEventType.d.ts b/node_modules/react-native-google-mobile-ads/lib/typescript/NativeAdEventType.d.ts
+index 3267e07..33072c6 100644
+--- a/node_modules/react-native-google-mobile-ads/lib/typescript/NativeAdEventType.d.ts
++++ b/node_modules/react-native-google-mobile-ads/lib/typescript/NativeAdEventType.d.ts
+@@ -38,6 +38,7 @@ export declare enum NativeAdEventType {
+     /**
+      * Called when the video controller has unmuted video.
+      */
+-    VIDEO_UNMUTED = "video_unmuted"
++    VIDEO_UNMUTED = "video_unmuted",
++    ERROR = "error",
+ }
+ //# sourceMappingURL=NativeAdEventType.d.ts.map
+\ No newline at end of file
+diff --git a/node_modules/react-native-google-mobile-ads/src/AdEventType.ts b/node_modules/react-native-google-mobile-ads/src/AdEventType.ts
+index 0c9502f..64fc432 100644
+--- a/node_modules/react-native-google-mobile-ads/src/AdEventType.ts
++++ b/node_modules/react-native-google-mobile-ads/src/AdEventType.ts
+@@ -67,4 +67,10 @@ export enum AdEventType {
+    * The user closed the ad and has returned back to your application.
+    */
+   CLOSED = 'closed',
++
++  
++  /**
++   * The user impression.
++   */
++  IMPRESSION = 'impression'
+ }
+diff --git a/node_modules/react-native-google-mobile-ads/src/hooks/useFullScreenAd.ts b/node_modules/react-native-google-mobile-ads/src/hooks/useFullScreenAd.ts
+index 1416855..c23a7c8 100644
+--- a/node_modules/react-native-google-mobile-ads/src/hooks/useFullScreenAd.ts
++++ b/node_modules/react-native-google-mobile-ads/src/hooks/useFullScreenAd.ts
+@@ -36,6 +36,7 @@ const initialState: AdStates = {
+   error: undefined,
+   reward: undefined,
+   isEarnedReward: false,
++  isImpression: false,
+ };
+ 
+ export function useFullScreenAd<
+@@ -85,6 +86,9 @@ export function useFullScreenAd<
+         case AdEventType.CLICKED:
+           setState({ isClicked: true });
+           break;
++        case AdEventType.IMPRESSION:
++          setState({ isImpression: true });
++          break;
+         case AdEventType.ERROR:
+           setState({ error: payload as Error });
+           break;
+diff --git a/node_modules/react-native-google-mobile-ads/src/types/AdStates.ts b/node_modules/react-native-google-mobile-ads/src/types/AdStates.ts
+index 6e9882f..2344b21 100644
+--- a/node_modules/react-native-google-mobile-ads/src/types/AdStates.ts
++++ b/node_modules/react-native-google-mobile-ads/src/types/AdStates.ts
+@@ -35,6 +35,8 @@ export interface AdStates {
+    * Whether the user earned the reward by Rewarded Ad.
+    */
+   isEarnedReward?: boolean;
++
++  isImpression?: boolean;
+ }
+ 
+ export interface AdHookReturns extends AdStates {

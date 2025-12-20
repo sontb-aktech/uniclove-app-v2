@@ -1,0 +1,83 @@
+diff --git a/node_modules/react-native-sse/src/EventSource.js b/node_modules/react-native-sse/src/EventSource.js
+index 6a7b146..46a6bf2 100644
+--- a/node_modules/react-native-sse/src/EventSource.js
++++ b/node_modules/react-native-sse/src/EventSource.js
+@@ -111,7 +111,6 @@ class EventSource {
+             this.dispatch('open', { type: 'open' });
+             this._logDebug('[EventSource][onreadystatechange][OPEN] Connection opened.');
+           }
+-
+           this._handleEvent(xhr.responseText || '');
+ 
+           if (xhr.readyState === XMLHttpRequest.DONE) {
+@@ -179,66 +178,17 @@ class EventSource {
+   }
+ 
+   _handleEvent(response) {
+-    if (this.lineEndingCharacter === null) {
+-      const detectedNewlineChar = this._detectNewlineChar(response);
+-      if (detectedNewlineChar !== null) {
+-        this._logDebug(`[EventSource] Automatically detected lineEndingCharacter: ${JSON.stringify(detectedNewlineChar).slice(1, -1)}`);
+-        this.lineEndingCharacter = detectedNewlineChar;
+-      } else {
+-        console.warn("[EventSource] Unable to identify the line ending character. Ensure your server delivers a standard line ending character: \\r\\n, \\n, \\r, or specify your custom character using the 'lineEndingCharacter' option.");
+-        return;
+-      }
+-    }
+-
+-    const indexOfDoubleNewline = this._getLastDoubleNewlineIndex(response);
+-    if (indexOfDoubleNewline <= this._lastIndexProcessed) {
+-      return;
+-    }
+     
+-    const parts = response.substring(this._lastIndexProcessed, indexOfDoubleNewline).split(this.lineEndingCharacter);
+-    this._lastIndexProcessed = indexOfDoubleNewline;
+-
+-    let type = undefined;
+-    let id = null;
+-    let data = [];
+-    let retry = 0;
+-    let line = '';
+-
+-    for (let i = 0; i < parts.length; i++) {
+-      line = parts[i].trim();
+-      if (line.startsWith('event')) {
+-        type = line.replace(/event:?\s*/, '');
+-      } else if (line.startsWith('retry')) {
+-        retry = parseInt(line.replace(/retry:?\s*/, ''), 10);
+-        if (!isNaN(retry)) {
+-          this.interval = retry;
+-        }
+-      } else if (line.startsWith('data')) {
+-        data.push(line.replace(/data:?\s*/, ''));
+-      } else if (line.startsWith('id')) {
+-        id = line.replace(/id:?\s*/, '');
+-        if (id !== '') {
+-          this.lastEventId = id;
+-        } else {
+-          this.lastEventId = null;
+-        }
+-      } else if (line === '') {
+-        if (data.length > 0) {
+-          const eventType = type || 'message';
+           const event = {
+-            type: eventType,
+-            data: data.join('\n'),
++            type: 'message',
++            data: response,
+             url: this.url,
+             lastEventId: this.lastEventId,
+           };
+ 
+-          this.dispatch(eventType, event);
++          this.dispatch('message', event);
++
+         
+-          data = [];
+-          type = undefined;
+-        }
+-      }
+-    }
+   }
+ 
+   _detectNewlineChar(response) {

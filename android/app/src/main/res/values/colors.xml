@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_FF7188">#FFFF7188</color>
+    <color name="color_background">#FFFFFF</color>
+    <color name="color_item_background">#FFF5F0FF</color>
+    <color name="color_primary">#FF8A79FF</color>
+    <color name="color_native_ad_small_background">#FFF5F9FE</color>
+    <color name="colorPrimary">#FF8A79FF</color>
+    <color name="color_primary_opacity_50">#808A79FF</color>
+    <color name="ic_launcher_background">#F8F6FF</color>
+</resources>

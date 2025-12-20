@@ -1,0 +1,74 @@
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsEvent.java b/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsEvent.java
+index e3296b4..ac47dcc 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsEvent.java
++++ b/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsEvent.java
+@@ -36,6 +36,7 @@ public class ReactNativeGoogleMobileAdsEvent implements NativeEvent {
+   public static final String GOOGLE_MOBILE_ADS_EVENT_CLICKED = "clicked";
+   public static final String GOOGLE_MOBILE_ADS_EVENT_CLOSED = "closed";
+   public static final String GOOGLE_MOBILE_ADS_EVENT_APP_EVENT = "app_event";
++  public static final String GOOGLE_MOBILE_ADS_EVENT_IMPRESSION = "impression";
+ 
+   public static final String GOOGLE_MOBILE_ADS_EVENT_REWARDED_LOADED = "rewarded_loaded";
+   public static final String GOOGLE_MOBILE_ADS_EVENT_REWARDED_EARNED_REWARD =
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt b/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt
+index 75cd58f..441e2ad 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt
++++ b/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt
+@@ -225,6 +225,7 @@ abstract class ReactNativeGoogleMobileAdsFullScreenAdModule<T>(
+ 
+             override fun onAdImpression() {
+               // Not Implemented Yet
++              sendAdEvent(ReactNativeGoogleMobileAdsEvent.GOOGLE_MOBILE_ADS_EVENT_IMPRESSION)
+             }
+ 
+             private fun sendAdEvent(type: String) {
+diff --git a/node_modules/react-native-google-mobile-ads/src/AdEventType.ts b/node_modules/react-native-google-mobile-ads/src/AdEventType.ts
+index 0c9502f..64fc432 100644
+--- a/node_modules/react-native-google-mobile-ads/src/AdEventType.ts
++++ b/node_modules/react-native-google-mobile-ads/src/AdEventType.ts
+@@ -67,4 +67,10 @@ export enum AdEventType {
+    * The user closed the ad and has returned back to your application.
+    */
+   CLOSED = 'closed',
++
++  
++  /**
++   * The user impression.
++   */
++  IMPRESSION = 'impression'
+ }
+diff --git a/node_modules/react-native-google-mobile-ads/src/hooks/useFullScreenAd.ts b/node_modules/react-native-google-mobile-ads/src/hooks/useFullScreenAd.ts
+index 1416855..c23a7c8 100644
+--- a/node_modules/react-native-google-mobile-ads/src/hooks/useFullScreenAd.ts
++++ b/node_modules/react-native-google-mobile-ads/src/hooks/useFullScreenAd.ts
+@@ -36,6 +36,7 @@ const initialState: AdStates = {
+   error: undefined,
+   reward: undefined,
+   isEarnedReward: false,
++  isImpression: false,
+ };
+ 
+ export function useFullScreenAd<
+@@ -85,6 +86,9 @@ export function useFullScreenAd<
+         case AdEventType.CLICKED:
+           setState({ isClicked: true });
+           break;
++        case AdEventType.IMPRESSION:
++          setState({ isImpression: true });
++          break;
+         case AdEventType.ERROR:
+           setState({ error: payload as Error });
+           break;
+diff --git a/node_modules/react-native-google-mobile-ads/src/types/AdStates.ts b/node_modules/react-native-google-mobile-ads/src/types/AdStates.ts
+index 6e9882f..2344b21 100644
+--- a/node_modules/react-native-google-mobile-ads/src/types/AdStates.ts
++++ b/node_modules/react-native-google-mobile-ads/src/types/AdStates.ts
+@@ -35,6 +35,8 @@ export interface AdStates {
+    * Whether the user earned the reward by Rewarded Ad.
+    */
+   isEarnedReward?: boolean;
++
++  isImpression?: boolean;
+ }
+ 
+ export interface AdHookReturns extends AdStates {

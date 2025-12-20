@@ -1,0 +1,27 @@
+diff --git a/node_modules/react-native-tts/android/build.gradle b/node_modules/react-native-tts/android/build.gradle
+index dbbe046..bcb7b17 100644
+--- a/node_modules/react-native-tts/android/build.gradle
++++ b/node_modules/react-native-tts/android/build.gradle
+@@ -4,7 +4,8 @@ def safeExtGet(prop, fallback) {
+ 
+ buildscript {
+     repositories {
+-        jcenter()
++        mavenCentral()
++        google()
+     }
+ 
+     dependencies {
+diff --git a/node_modules/react-native-tts/ios/TextToSpeech/TextToSpeech.m b/node_modules/react-native-tts/ios/TextToSpeech/TextToSpeech.m
+index 1e769cc..94a117f 100644
+--- a/node_modules/react-native-tts/ios/TextToSpeech/TextToSpeech.m
++++ b/node_modules/react-native-tts/ios/TextToSpeech/TextToSpeech.m
+@@ -94,7 +94,7 @@ RCT_EXPORT_METHOD(speak:(NSString *)text
+     resolve([NSNumber numberWithUnsignedLong:utterance.hash]);
+ }
+ 
+-RCT_EXPORT_METHOD(stop:(BOOL *)onWordBoundary resolve:(RCTPromiseResolveBlock)resolve reject:(__unused RCTPromiseRejectBlock)reject)
++RCT_EXPORT_METHOD(stop:(BOOL)onWordBoundary resolve:(RCTPromiseResolveBlock)resolve reject:(__unused RCTPromiseRejectBlock)reject)
+ {
+     AVSpeechBoundary boundary;
+ 

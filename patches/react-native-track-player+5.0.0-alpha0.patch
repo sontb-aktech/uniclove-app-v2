@@ -1,0 +1,21 @@
+diff --git a/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt b/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
+index b495b5a..68ef525 100644
+--- a/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
++++ b/node_modules/react-native-track-player/android/src/main/java/com/doublesymmetry/trackplayer/service/MusicService.kt
+@@ -792,9 +792,14 @@ class MusicService : HeadlessJsMediaService() {
+ 
+     @MainThread
+     override fun onDestroy() {
+-        if (::player.isInitialized) {
+-            Timber.d("Releasing media session and destroying player")
++        try {
+             mediaSession.release()
++        } catch (e: Exception) {
++            Timber.w(e, "Error releasing media session")
++        }
++        if (::player.isInitialized) {
++            //Timber.d("Releasing media session and destroying player")
++            //mediaSession.release()
+             player.destroy()
+         }
+ 
