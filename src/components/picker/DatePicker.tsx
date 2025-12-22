@@ -1,5 +1,5 @@
 import useTheme from 'hooks/useTheme';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Pressable,
   TextInput,
@@ -8,7 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import ImageIcon from 'components/ImageIcon';
+import ImageIcon from 'components/image/ImageIcon';
 import CustomText from 'components/text/CustomText';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
@@ -22,7 +22,7 @@ const DatePicker = (props: {
   onChangeDate?: (date: Date) => void;
   textError?: string;
 }) => {
-  const {themeStyle} = useTheme();
+  const { themeStyle } = useTheme();
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
   const [currentDate, setCurrentDate] = useState<Date>();
 
@@ -35,7 +35,7 @@ const DatePicker = (props: {
 
   return (
     <View style={[props.style]}>
-      <CustomText fontStyleType="title-semibold" style={{marginBottom: 12}}>
+      <CustomText fontStyleType="title-semibold" style={{ marginBottom: 12 }}>
         {props.label}
       </CustomText>
       <TouchableOpacity
@@ -53,10 +53,12 @@ const DatePicker = (props: {
             paddingVertical: 16,
           },
         ]}
-        onPress={() => setShowDateTimePicker(true)}>
+        onPress={() => setShowDateTimePicker(true)}
+      >
         <CustomText
           colorType={currentDate ? 'default' : 'subtitleText'}
-          style={{flex: 1}}>
+          style={{ flex: 1 }}
+        >
           {currentDate
             ? moment(currentDate).format('DD / MM / YYYY')
             : 'dd / mm / yyyyy'}
@@ -84,7 +86,8 @@ const DatePicker = (props: {
       {!!props.isError && (
         <CustomText
           fontStyleType="title-semibold"
-          style={{marginTop: 8, color: themeStyle.error, fontStyle: 'italic'}}>
+          style={{ marginTop: 8, color: themeStyle.error, fontStyle: 'italic' }}
+        >
           {props.textError ?? '*Không được để trống thông tin này'}
         </CustomText>
       )}

@@ -3,10 +3,10 @@ import useCommon from 'hooks/useCommon';
 import useStatusBar from 'hooks/useStatusBar';
 import useTheme from 'hooks/useTheme';
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 const TemplateScreen = () => {
-  useStatusBar('dark-content');
-  const {theme, themeStyle} = useTheme();
+  useStatusBar();
+  const { theme, themeStyle } = useTheme();
   const common = useCommon();
 
   return <ScreenContainer title=""></ScreenContainer>;

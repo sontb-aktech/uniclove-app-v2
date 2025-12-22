@@ -1,7 +1,7 @@
-import ImageIcon from 'components/ImageIcon';
+import ImageIcon from 'components/image/ImageIcon';
 import React from 'react';
-import {ImageSourcePropType} from 'react-native';
-import {RootStackParamList} from 'screens';
+import { ImageSourcePropType } from 'react-native';
+import { RootStackParamList } from 'screens';
 export type TabBarType = {
   sourceIcon: ImageSourcePropType;
   sourceActiveIcon?: ImageSourcePropType;
@@ -36,7 +36,7 @@ const TabBarIcon = ({
             tabBarConfig[routeName]!.sourceIcon
           }
           tintColor={activeColor}
-          style={{marginBottom: 4}}
+          style={{ marginBottom: 4 }}
         />
       );
     } else {
@@ -45,7 +45,7 @@ const TabBarIcon = ({
           size={24}
           source={tabBarConfig[routeName]!.sourceIcon}
           tintColor={color}
-          style={{marginBottom: 4}}
+          style={{ marginBottom: 4 }}
         />
       );
     }

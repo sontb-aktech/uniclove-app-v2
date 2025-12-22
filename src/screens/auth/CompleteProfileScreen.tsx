@@ -1,6 +1,6 @@
 import GradientBorderButton from 'components/button/GradientBorderButton';
 import GradientButton from 'components/button/GradientButton';
-import ImageIcon from 'components/ImageIcon';
+import ImageIcon from 'components/image/ImageIcon';
 import DatePicker from 'components/picker/DatePicker';
 import ListPicker from 'components/picker/ListPicker';
 import GroupRatio from 'components/ratio/GroupRatio';
@@ -44,7 +44,7 @@ const LIST_PROVINCE = [
 ];
 
 const CompleteProfileScreen = () => {
-  useStatusBar('dark-content');
+  useStatusBar();
   const { theme, themeStyle } = useTheme();
   const common = useCommon();
   const insets = useSafeAreaInsets();

@@ -18,7 +18,7 @@ import { BlurView } from '@danielsaraldi/react-native-blur-view';
 import { Portal } from 'react-native-portalize';
 import { useBackHandler } from '@react-native-community/hooks';
 import useTheme from 'hooks/useTheme';
-import ImageIcon from 'components/ImageIcon';
+import ImageIcon from 'components/image/ImageIcon';
 const { width, height } = Dimensions.get('window');
 const DURATION = 200;
 const SlideFadeInUp = new Keyframe({

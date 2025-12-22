@@ -12,7 +12,7 @@ import CustomText, {
   CustomFontStyleType,
   getFontStyleType,
 } from './CustomText';
-import ImageIcon from 'components/ImageIcon';
+import ImageIcon from 'components/image/ImageIcon';
 
 const CustomInput = (
   props: TextInputProps & {
