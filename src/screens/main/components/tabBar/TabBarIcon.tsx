@@ -1,6 +1,7 @@
 import ImageIcon from 'components/image/ImageIcon';
+import useTheme from 'hooks/useTheme';
 import React from 'react';
-import { ImageSourcePropType } from 'react-native';
+import { ImageSourcePropType, StyleSheet, View } from 'react-native';
 import { RootStackParamList } from 'screens';
 export type TabBarType = {
   sourceIcon: ImageSourcePropType;
@@ -26,30 +27,42 @@ const TabBarIcon = ({
   color,
   activeColor,
 }: Props) => {
+  const { themeStyle } = useTheme();
   if (tabBarConfig[routeName]) {
     if (focused) {
       return (
-        <ImageIcon
-          size={24}
-          source={
-            tabBarConfig[routeName]!.sourceActiveIcon ??
-            tabBarConfig[routeName]!.sourceIcon
-          }
-          tintColor={activeColor}
-          style={{ marginBottom: 4 }}
-        />
+        <View
+          style={[
+            styles.itemContainer,
+            { backgroundColor: themeStyle.primaryContainer },
+          ]}
+        >
+          <ImageIcon
+            source={
+              tabBarConfig[routeName]!.sourceActiveIcon ??
+              tabBarConfig[routeName]!.sourceIcon
+            }
+          />
+        </View>
       );
     } else {
       return (
-        <ImageIcon
-          size={24}
-          source={tabBarConfig[routeName]!.sourceIcon}
-          tintColor={color}
-          style={{ marginBottom: 4 }}
-        />
+        <View style={styles.itemContainer}>
+          <ImageIcon size={24} source={tabBarConfig[routeName]!.sourceIcon} />
+        </View>
       );
     }
   } else return null;
 };
 
 export default TabBarIcon;
+
+const styles = StyleSheet.create({
+  itemContainer: {
+    width: 56,
+    height: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
+  },
+});

@@ -13,30 +13,46 @@ const PictureProfileUpload = () => {
           // width: '100%',
           // width: 200,
           alignSelf: 'stretch',
-          marginHorizontal: 20,
         }}
       >
-        <Image
-          source={require('assets/img_curved_chain.png')}
-          style={{
-            alignSelf: 'stretch',
-            aspectRatio: 1170 / 72,
-            backgroundColor: 'red',
-          }}
-          resizeMode="center"
-        />
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            marginTop: -12,
-          }}
-        >
-          {list1.map((item, index) => (
-            <PictureProfileItem key={index} />
-          ))}
+        <View style={{ marginTop: 16 }}>
+          <CurvedChain />
+          <View style={styles.pictureContainer}>
+            {list1.map((item, index) => (
+              <PictureProfileItem key={index} />
+            ))}
+          </View>
+        </View>
+        <View style={{ marginTop: 16 }}>
+          <CurvedChain />
+          <View style={styles.pictureContainer}>
+            {list1.map((item, index) => (
+              <PictureProfileItem key={index} />
+            ))}
+          </View>
         </View>
       </View>
+    </View>
+  );
+};
+
+const CurvedChain = () => {
+  return (
+    <View
+      style={{
+        alignSelf: 'stretch',
+        aspectRatio: 1170 / 72,
+        flexDirection: 'row',
+      }}
+    >
+      <Image
+        source={require('assets/img_curved_chain.png')}
+        style={{
+          flex: 1,
+          aspectRatio: 1170 / 72,
+        }}
+        resizeMode="center"
+      />
     </View>
   );
 };
@@ -93,6 +109,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 20,
     marginTop: -16,
+  },
+  pictureContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: -12,
   },
 });
 

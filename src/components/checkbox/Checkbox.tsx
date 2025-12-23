@@ -2,14 +2,14 @@ import ImageIcon from 'components/image/ImageIcon';
 import useTheme from 'hooks/useTheme';
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-const RatioButton = (props: { style?: ViewStyle; isSelected?: boolean }) => {
+const Checkbox = (props: { style?: ViewStyle; isSelected?: boolean }) => {
   const { themeStyle } = useTheme();
   return (
     <View style={[props.style]}>
       {props.isSelected ? (
-        <ImageIcon source={require('assets/ic_ratio_active.png')} />
+        <ImageIcon source={require('assets/ic_checkbox_active.png')} />
       ) : (
-        <ImageIcon source={require('assets/ic_ratio.png')} />
+        <ImageIcon source={require('assets/ic_checkbox.png')} />
       )}
     </View>
   );
@@ -21,4 +21,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RatioButton;
+export default Checkbox;
