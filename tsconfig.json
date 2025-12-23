@@ -15,7 +15,8 @@
     "baseUrl": "src",
     "paths": {
       "react": ["./node_modules/@types/react"]
-    }
+    },
+    "types": ["jest"]
   },
   "exclude": [
     "node_modules",

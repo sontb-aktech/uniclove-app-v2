@@ -1,4 +1,4 @@
-import ImageIcon from 'components/ImageIcon';
+import ImageIcon from 'components/image/ImageIcon';
 import RatioButton from 'components/ratio/RatioButton';
 import useTheme from 'hooks/useTheme';
 import React from 'react';
@@ -17,20 +17,21 @@ function ItemLanguage(
     style?: ViewStyle;
   },
 ) {
-  const {onSelected, isSelected, style, ...item} = props;
-  const {themeStyle} = useTheme();
+  const { onSelected, isSelected, style, ...item } = props;
+  const { themeStyle } = useTheme();
   return (
     <TouchableOpacity
       style={[
         styles.itemContainer,
-        {backgroundColor: themeStyle.surface},
+        { backgroundColor: themeStyle.surface },
         isSelected && {
           borderColor: themeStyle.primary,
           borderWidth: 1,
         },
         props.style,
       ]}
-      onPress={() => props.onSelected(item)}>
+      onPress={() => props.onSelected(item)}
+    >
       {!!item.flag && (
         <ImageIcon source={item.flag} size={22} tintColor={item.tintColor} />
       )}
@@ -40,7 +41,8 @@ function ItemLanguage(
           fontSize: 14,
           flex: 1,
           marginLeft: 10,
-        }}>
+        }}
+      >
         {item.name}
       </Text>
       <RatioButton isSelected={isSelected} />

@@ -1,5 +1,5 @@
 import useCommon from 'hooks/useCommon';
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -11,13 +11,16 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
-import ImageIcon from './ImageIcon';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import ImageIcon from './image/ImageIcon';
 import useTheme from 'hooks/useTheme';
-import {useBackHandler, useKeyboard} from '@react-native-community/hooks';
+import { useBackHandler, useKeyboard } from '@react-native-community/hooks';
 import GradientText from './text/GradientText';
 import CustomText from './text/CustomText';
-import {LightStyle} from 'utils/Colors';
+import { LightStyle } from 'utils/Colors';
 
 export type ButtonRightType = {
   source?: any;
@@ -44,7 +47,7 @@ const ScreenContainer = (props: {
   hideHeader?: boolean;
 }) => {
   const common = useCommon();
-  const {theme, themeStyle} = useTheme();
+  const { theme, themeStyle } = useTheme();
   const insets = useSafeAreaInsets();
   // const bottomRef = useRef(insets.bottom);
   const keyboard = useKeyboard();
@@ -61,7 +64,7 @@ const ScreenContainer = (props: {
     <View
       style={{
         flex: 1,
-        // backgroundColor: themeStyle.background,
+        backgroundColor: themeStyle.background,
         paddingTop: insets.top,
         paddingBottom: Platform.select({
           ios: props.safeBottom ? insets.bottom : 0,
@@ -86,17 +89,19 @@ const ScreenContainer = (props: {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={'padding'}
-        enabled={props.containInput && Platform.OS == 'ios' ? true : false}>
+        enabled={props.containInput && Platform.OS == 'ios' ? true : false}
+      >
         {!props.hideHeader && (
           <View style={[styles.header, props.headerStyle, {}]}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               {!props.disableBack ? (
                 <Pressable
                   style={[styles.btnBack]}
                   hitSlop={10}
                   onPress={() => {
                     props.onPressBack ? props.onPressBack() : common.goBack();
-                  }}>
+                  }}
+                >
                   <ImageIcon
                     size={24}
                     source={require('assets/ic_back.png')}
@@ -104,7 +109,7 @@ const ScreenContainer = (props: {
                   />
                 </Pressable>
               ) : (
-                <View style={{width: 18}} />
+                <View style={{ width: 18 }} />
               )}
 
               <CustomText fontStyleType="header-medium" numberOfLines={1}>
@@ -116,28 +121,32 @@ const ScreenContainer = (props: {
                   justifyContent: 'flex-end',
                   alignItems: 'center',
                   flexDirection: 'row',
-                }}>
+                }}
+              >
                 {props.listButtonRight?.map((item, index) => {
                   if (item.button) {
                     return (
                       <Pressable
                         key={index}
                         hitSlop={10}
-                        onPress={item.onPress}>
+                        onPress={item.onPress}
+                      >
                         {item.button}
                       </Pressable>
                     );
                   }
                   return (
                     <Pressable
-                      style={[styles.button, !!item.text && {width: 'auto'}]}
+                      style={[styles.button, !!item.text && { width: 'auto' }]}
                       onPress={item.onPress}
-                      key={index}>
+                      key={index}
+                    >
                       {!!item.text ? (
                         <CustomText
                           style={{
                             textDecorationLine: 'underline',
-                          }}>
+                          }}
+                        >
                           {item.text}
                         </CustomText>
                       ) : (
@@ -151,7 +160,7 @@ const ScreenContainer = (props: {
           </View>
         )}
 
-        <View style={[{flex: 1}, props.contentContainerStyle]}>
+        <View style={[{ flex: 1 }, props.contentContainerStyle]}>
           {props.children}
         </View>
       </KeyboardAvoidingView>

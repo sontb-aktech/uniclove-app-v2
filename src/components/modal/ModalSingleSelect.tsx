@@ -16,7 +16,7 @@ import { GlobalStyles } from 'utils/GlobalStyles';
 import TextUtils from 'utils/TextUtils';
 import ModalPopup from './ModalPopup';
 import CustomInput from 'components/text/CustomInput';
-import ImageIcon from 'components/ImageIcon';
+import ImageIcon from 'components/image/ImageIcon';
 import useTheme from 'hooks/useTheme';
 import CustomText from 'components/text/CustomText';
 import RatioButton from 'components/ratio/RatioButton';

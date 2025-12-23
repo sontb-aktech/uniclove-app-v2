@@ -6,7 +6,7 @@ import useCommon from 'hooks/useCommon';
 import useRouteParams from 'hooks/useRouteParams';
 import useStatusBar from 'hooks/useStatusBar';
 import useTheme from 'hooks/useTheme';
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
   Platform,
@@ -15,8 +15,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {removeListener, startOtpListener} from 'react-native-otp-verify';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+// import {removeListener, startOtpListener} from 'react-native-otp-verify';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import {sendOtp, validOtp} from 'stores/UserSlice';
 
 const VerifyOtpScreen = () => {
@@ -24,7 +24,7 @@ const VerifyOtpScreen = () => {
   const common = useCommon();
   const phone = useRouteParams('VerifyOtpScreen')?.phone;
   const insets = useSafeAreaInsets();
-  const {themeStyle} = useTheme();
+  const { themeStyle } = useTheme();
   // const recaptcha = useAppSelector(state => state.user).recaptcha;
   const [listInput, setListInput] = useState(['', '', '', '', '', '']);
   const refsInput = useRef([
@@ -45,20 +45,6 @@ const VerifyOtpScreen = () => {
   useEffect(() => {
     sendOtpApi();
   }, [otpMethod]);
-
-  useEffect(() => {
-    if (Platform.OS == 'android') {
-      startOtpListener(message => {
-        try {
-          const otp = /(\d{6})/g.exec(message)?.[1];
-          if (otp && otp.length == 6) {
-            setListInput(otp?.split(''));
-          }
-        } catch {}
-      });
-      return () => removeListener();
-    }
-  }, []);
 
   useEffect(() => {
     let timeout: any;
@@ -130,11 +116,12 @@ const VerifyOtpScreen = () => {
   const a = refsInput.current[0];
   return (
     <ScreenContainer title="" containInput>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{ flex: 1 }}>
         <View
           style={{
             alignItems: 'center',
-          }}>
+          }}
+        >
           <Image
             source={require('assets/img_bg_otp.png')}
             style={{
@@ -146,17 +133,19 @@ const VerifyOtpScreen = () => {
           <CustomText
             style={[
               styles.textTitle,
-              {color: themeStyle.onBackground, marginTop: -12},
+              { color: themeStyle.onBackground, marginTop: -12 },
             ]}
-            fontStyleType="header-medium">
+            fontStyleType="header-medium"
+          >
             Xác minh OTP
           </CustomText>
           <CustomText
             style={[
               styles.textDesc,
-              {color: themeStyle.onSurfaceVariant, marginTop: 4},
+              { color: themeStyle.onSurfaceVariant, marginTop: 4 },
             ]}
-            fontStyleType="text-regular">
+            fontStyleType="text-regular"
+          >
             Nhập dãy số OTP đã gửi đến +84 387024364
           </CustomText>
 
@@ -171,7 +160,8 @@ const VerifyOtpScreen = () => {
                       borderColor: !!item ? themeStyle.primary : 'transparent',
                     },
                   ]}
-                  key={index}>
+                  key={index}
+                >
                   <TextInput
                     ref={ref => {
                       refsInput.current[index] = ref;
@@ -184,7 +174,7 @@ const VerifyOtpScreen = () => {
                     // maxLength={1}
                     // contextMenuHidden={true}
                     autoFocus={index == 0}
-                    onKeyPress={({nativeEvent}) => {
+                    onKeyPress={({ nativeEvent }) => {
                       // console.log(nativeEvent);
                       if (
                         nativeEvent.key === 'Backspace' &&
@@ -203,20 +193,30 @@ const VerifyOtpScreen = () => {
           </View>
           <GradientButton
             text="Xác nhận"
-            style={{alignSelf: 'stretch', marginHorizontal: 20, marginTop: 20}}
+            style={{
+              alignSelf: 'stretch',
+              marginHorizontal: 20,
+              marginTop: 20,
+            }}
           />
           <View
-            style={{flexDirection: 'row', alignItems: 'center', marginTop: 16}}>
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 16,
+            }}
+          >
             <CustomText
               style={{
                 color: themeStyle.onSurfaceVariant,
               }}
-              fontStyleType="text-regular">
+              fontStyleType="text-regular"
+            >
               Bạn không nhận được gửi OTP?
             </CustomText>
             <TextUnderLineButton
               text="Yêu cầu gửi lại"
-              style={{marginLeft: 4}}
+              style={{ marginLeft: 4 }}
             />
           </View>
         </View>
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1.5,
   },
-  inputPhone: {height: 40, width: 40, textAlign: 'center'},
+  inputPhone: { height: 40, width: 40, textAlign: 'center' },
   buttonNext: {
     width: 50,
     height: 50,

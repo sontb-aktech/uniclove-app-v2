@@ -1,0 +1,24 @@
+import ImageIcon from 'components/image/ImageIcon';
+import useTheme from 'hooks/useTheme';
+import React from 'react';
+import { StyleSheet, View, ViewStyle } from 'react-native';
+const Checkbox = (props: { style?: ViewStyle; isSelected?: boolean }) => {
+  const { themeStyle } = useTheme();
+  return (
+    <View style={[props.style]}>
+      {props.isSelected ? (
+        <ImageIcon source={require('assets/ic_checkbox_active.png')} />
+      ) : (
+        <ImageIcon source={require('assets/ic_checkbox.png')} />
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+
+export default Checkbox;

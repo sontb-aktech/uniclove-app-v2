@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   DimensionValue,
   Keyboard,
@@ -10,34 +10,34 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import Animated, {FadeIn, FadeOut, Keyframe} from 'react-native-reanimated';
-import {BlurView} from '@danielsaraldi/react-native-blur-view';
-import {Portal} from 'react-native-portalize';
-import {useBackHandler} from '@react-native-community/hooks';
+import Animated, { FadeIn, FadeOut, Keyframe } from 'react-native-reanimated';
+import { BlurView } from '@danielsaraldi/react-native-blur-view';
+import { Portal } from 'react-native-portalize';
+import { useBackHandler } from '@react-native-community/hooks';
 import useTheme from 'hooks/useTheme';
-import ImageIcon from 'components/ImageIcon';
+import ImageIcon from 'components/image/ImageIcon';
 
 const DURATION = 200;
 
 const FadeZoomIn = new Keyframe({
   0: {
     opacity: 0,
-    transform: [{scale: 0.2}],
+    transform: [{ scale: 0.2 }],
   },
   100: {
     opacity: 1,
-    transform: [{scale: 1}],
+    transform: [{ scale: 1 }],
   },
 }).duration(DURATION);
 
 const FadeZoomOut = new Keyframe({
   0: {
     opacity: 1,
-    transform: [{scale: 1}],
+    transform: [{ scale: 1 }],
   },
   100: {
     opacity: 0,
-    transform: [{scale: 0.2}],
+    transform: [{ scale: 0.2 }],
   },
 }).duration(DURATION);
 
@@ -50,8 +50,8 @@ const ModalCenter = (props: {
   disableClickOutside?: boolean;
   contentContainerStyle?: ViewStyle;
 }) => {
-  const {children, onCancel, isVisible} = props;
-  const {themeStyle} = useTheme();
+  const { children, onCancel, isVisible } = props;
+  const { themeStyle } = useTheme();
   useBackHandler(() => {
     if (props.isVisible) {
       props.onCancel();
@@ -71,17 +71,20 @@ const ModalCenter = (props: {
         <KeyboardAvoidingView
           behavior="padding"
           style={styles.fullScreen}
-          enabled>
+          enabled
+        >
           <Animated.View
             style={[styles.backdrop]}
             entering={FadeIn.duration(200)}
-            exiting={FadeOut.duration(500)}>
+            exiting={FadeOut.duration(500)}
+          >
             <TouchableWithoutFeedback
               onPress={onCancel}
-              disabled={props.disableClickOutside}>
-              <View style={{flex: 1}}>
+              disabled={props.disableClickOutside}
+            >
+              <View style={{ flex: 1 }}>
                 <BlurView
-                  style={{flex: 1}}
+                  style={{ flex: 1 }}
                   radius={20}
                   targetId="target"
                   type={Platform.OS == 'ios' ? 'dark' : 'dark'}
@@ -99,7 +102,8 @@ const ModalCenter = (props: {
                 top: 0,
                 right: 0,
                 bottom: 0,
-              }}>
+              }}
+            >
               {props.background}
             </View>
           )}
@@ -109,7 +113,8 @@ const ModalCenter = (props: {
             style={{
               alignSelf: 'stretch',
               maxHeight: props.maxHeight,
-            }}>
+            }}
+          >
             <View
               style={[
                 {
@@ -120,11 +125,13 @@ const ModalCenter = (props: {
                   overflow: 'hidden',
                 },
                 props.contentContainerStyle,
-              ]}>
+              ]}
+            >
               {children}
               <Pressable
-                style={{position: 'absolute', top: 16, right: 16}}
-                onPress={() => props.onCancel()}>
+                style={{ position: 'absolute', top: 16, right: 16 }}
+                onPress={() => props.onCancel()}
+              >
                 <ImageIcon
                   source={require('assets/ic_close_modal.png')}
                   size={24}

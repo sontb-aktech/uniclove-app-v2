@@ -1,34 +1,53 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import ModalCodepush from 'components/ModalCodepush';
 import NotificationHelper from 'helpers/NotificationHelper';
 import useCommon from 'hooks/useCommon';
 import useRouteParams from 'hooks/useRouteParams';
 import useTheme from 'hooks/useTheme';
-import React, {useEffect, useState} from 'react';
-import {Platform, TouchableOpacity, View} from 'react-native';
-import {HomeScreen, RootStackParamList, SettingsScreen} from 'screens';
-import {useAppSelector} from 'stores';
+import React, { useEffect, useState } from 'react';
+import { Platform, TouchableOpacity, View } from 'react-native';
+import {
+  ChatScreen,
+  HomeScreen,
+  MatchingScreen,
+  NearbyScreen,
+  RootStackParamList,
+  SettingsScreen,
+  ToolScreen,
+} from 'screens';
+import { useAppSelector } from 'stores';
 // import {trans} from 'trans';
 import useTrans from 'hooks/useTrans';
-import TabBarIcon, {TabBarConfigType} from './components/tabBar/TabBarIcon';
+import TabBarIcon, { TabBarConfigType } from './components/tabBar/TabBarIcon';
 import CustomTabBar from './components/tabBar/CustomTabBar';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 const TabBarConfig: TabBarConfigType = {
-  HomeScreen: {
-    sourceIcon: require('assets/ic_tab_home.png'),
-    sourceActiveIcon: require('assets/ic_tab_home_active.png'),
+  // HomeScreen: {
+  //   sourceIcon: require('assets/ic_tab_home.png'),
+  //   sourceActiveIcon: require('assets/ic_tab_home_active.png'),
+  // },
+  MatchingScreen: {
+    sourceIcon: require('assets/ic_tab_matching.png'),
+    sourceActiveIcon: require('assets/ic_tab_matching_active.png'),
   },
-
-  SettingsScreen: {
-    sourceIcon: require('assets/ic_tab_setting.png'),
-    sourceActiveIcon: require('assets/ic_tab_setting_active.png'),
+  NearbyScreen: {
+    sourceIcon: require('assets/ic_tab_nearby.png'),
+    sourceActiveIcon: require('assets/ic_tab_nearby_active.png'),
+  },
+  ChatScreen: {
+    sourceIcon: require('assets/ic_tab_chat.png'),
+    sourceActiveIcon: require('assets/ic_tab_chat_active.png'),
+  },
+  ToolScreen: {
+    sourceIcon: require('assets/ic_tab_tool.png'),
+    sourceActiveIcon: require('assets/ic_tab_tool_active.png'),
   },
 };
 
 const MainTabScreen = () => {
-  const {theme, themeStyle} = useTheme();
-  const {trans} = useTrans();
+  const { theme, themeStyle } = useTheme();
+  const { trans } = useTrans();
   const params = useRouteParams('MainTabScreen');
 
   const userInfo = useAppSelector(state => state.user).userInfo;
@@ -47,7 +66,7 @@ const MainTabScreen = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <Tab.Navigator
         tabBar={props => {
           return (
@@ -58,9 +77,9 @@ const MainTabScreen = () => {
             />
           );
         }}
-        safeAreaInsets={{bottom: 0}}
-        screenOptions={({route}) => ({
-          tabBarIcon: ({focused, color, size}) => {
+        safeAreaInsets={{ bottom: 0 }}
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
             return (
               <TabBarIcon
                 tabBarConfig={TabBarConfig}
@@ -74,7 +93,7 @@ const MainTabScreen = () => {
           // tabBarHideOnKeyboard: true,
           tabBarActiveTintColor: themeStyle.primary,
           tabBarInactiveTintColor: themeStyle.onSurfaceVariant,
-          tabBarShowLabel: true,
+          tabBarShowLabel: false,
           tabBarLabelStyle: {
             fontSize: 12,
           },
@@ -87,7 +106,7 @@ const MainTabScreen = () => {
 
           headerShown: false,
           animation: Platform.OS == 'android' ? 'shift' : 'none',
-          sceneStyle: {backgroundColor: 'transparent'},
+          sceneStyle: { backgroundColor: 'transparent' },
           headerPressColor: 'transparent',
           tabBarButton: (props: any) => <TouchableOpacity {...props} />,
         })}
@@ -97,15 +116,24 @@ const MainTabScreen = () => {
         // detachInactiveScreens={true}
       >
         <Tab.Screen
-          name={'HomeScreen'}
-          component={HomeScreen}
-          options={{title: 'trans.trending'}}
+          name={'MatchingScreen'}
+          component={MatchingScreen}
+          options={{ title: 'trans.matching' }}
         />
-
         <Tab.Screen
-          name={'SettingsScreen'}
-          component={SettingsScreen}
-          options={{title: 'trans.history'}}
+          name={'NearbyScreen'}
+          component={NearbyScreen}
+          options={{ title: 'trans.nearby' }}
+        />
+        <Tab.Screen
+          name={'ChatScreen'}
+          component={ChatScreen}
+          options={{ title: 'trans.chat' }}
+        />
+        <Tab.Screen
+          name={'ToolScreen'}
+          component={ToolScreen}
+          options={{ title: 'trans.tools' }}
         />
       </Tab.Navigator>
     </View>

@@ -1,3 +1,4 @@
+import de from 'trans/de';
 import { PreloadableComponent } from 'utils/lazyWithPreload';
 
 export { default as HomeScreen } from './home/HomeScreen';
@@ -12,6 +13,15 @@ export { default as VerifyOtpScreen } from './auth/VerifyOtpScreen';
 export { default as CompleteProfileScreen } from './auth/CompleteProfileScreen';
 export { default as CreatePasswordScreen } from './auth/CreatePasswordScreen';
 export { default as CompletePictureProfileScreen } from './auth/CompletePictureProfileScreen';
+export { default as WelcomScreen } from './auth/WelcomScreen';
+export { default as SurveyStep1Screen } from './survey/SurveyStep1Screen';
+export { default as SurveyStep2Screen } from './survey/SurveyStep2Screen';
+export { default as SurveyStep3Screen } from './survey/SurveyStep3Screen';
+export { default as MatchingScreen } from './matching/MatchingScreen';
+export { default as ToolScreen } from './tool/ToolScreen';
+export { default as ChatScreen } from './chat/ChatScreen';
+export { default as NearbyScreen } from './nearby/NearbyScreen';
+
 export type RootStackParamList = {
   ToolsScreen: undefined;
   HomeScreen: undefined;
@@ -27,4 +37,12 @@ export type RootStackParamList = {
   CompleteProfileScreen: undefined;
   CreatePasswordScreen: undefined;
   CompletePictureProfileScreen: undefined;
+  WelcomScreen: undefined;
+  SurveyStep1Screen: undefined;
+  SurveyStep2Screen: undefined;
+  SurveyStep3Screen: undefined;
+  MatchingScreen: undefined;
+  ToolScreen: undefined;
+  ChatScreen: undefined;
+  NearbyScreen: undefined;
 };

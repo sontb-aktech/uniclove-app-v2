@@ -1,7 +1,7 @@
 import useTheme from 'hooks/useTheme';
 import React from 'react';
-import {Text, TextProps, TextStyle} from 'react-native';
-import {LightStyle} from 'utils/Colors';
+import { Text, TextProps, TextStyle } from 'react-native';
+import { LightStyle } from 'utils/Colors';
 
 export type CustomFontStyleType =
   | 'header-medium'
@@ -20,7 +20,7 @@ const CustomText = (
     colorType?: ColorTextType;
   },
 ) => {
-  const {themeStyle} = useTheme();
+  const { themeStyle } = useTheme();
   let style = getFontStyleType(
     props.fontStyleType,
     props.colorType,
@@ -53,7 +53,7 @@ export const getFontStyleType = (
     case 'title-semibold':
       style = {
         fontSize: 16,
-        fontWeight: '500',
+        fontWeight: '600',
       };
       break;
     case 'small-semibold':

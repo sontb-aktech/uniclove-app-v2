@@ -15,6 +15,10 @@ import {
   CompleteProfileScreen,
   CreatePasswordScreen,
   CompletePictureProfileScreen,
+  WelcomScreen,
+  SurveyStep1Screen,
+  SurveyStep2Screen,
+  SurveyStep3Screen,
 } from 'screens';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -57,6 +61,11 @@ const Nav = () => {
         name="CompletePictureProfileScreen"
         component={CompletePictureProfileScreen}
       />
+      <Stack.Screen name="WelcomScreen" component={WelcomScreen} />
+
+      <Stack.Screen name="SurveyStep1Screen" component={SurveyStep1Screen} />
+      <Stack.Screen name="SurveyStep2Screen" component={SurveyStep2Screen} />
+      <Stack.Screen name="SurveyStep3Screen" component={SurveyStep3Screen} />
     </Stack.Navigator>
   );
 };

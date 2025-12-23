@@ -1,7 +1,7 @@
 import useTheme from 'hooks/useTheme';
 import React, { useState } from 'react';
 import { TouchableOpacity, View, ViewStyle } from 'react-native';
-import ImageIcon from 'components/ImageIcon';
+import ImageIcon from 'components/image/ImageIcon';
 import CustomText from 'components/text/CustomText';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import ModalSingleSelect from 'components/modal/ModalSingleSelect';
