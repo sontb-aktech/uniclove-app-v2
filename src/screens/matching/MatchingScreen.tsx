@@ -1,5 +1,13 @@
+import ScreenContainer from 'components/ScreenContainer';
 import * as React from 'react';
-import { Dimensions, Image, ImageSourcePropType, View } from 'react-native';
+import {
+  Dimensions,
+  Image,
+  ImageSourcePropType,
+  Text,
+  View,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import Animated, {
   Extrapolation,
   FadeInDown,
@@ -7,7 +15,7 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import Carousel, { TAnimationStyle } from 'react-native-reanimated-carousel';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import MainHeader from 'screens/components/MainHeader';
 
 const window = Dimensions.get('window');
 const width = Dimensions.get('window').width;
@@ -22,9 +30,8 @@ const data = [
 ];
 
 const MatchingScreen = () => {
-  const headerHeight = 250;
   const PAGE_WIDTH = window.width;
-  const PAGE_HEIGHT = window.height - headerHeight;
+  const PAGE_HEIGHT = PAGE_WIDTH / 0.63;
 
   const directionAnimVal = useSharedValue(0);
 
@@ -67,15 +74,14 @@ const MatchingScreen = () => {
   );
 
   return (
-    <View
-      id="carousel-component"
+    <ScreenContainer
+      hideHeader
       style={{
-        width: PAGE_WIDTH,
-        height: PAGE_HEIGHT,
         justifyContent: 'center',
         alignItems: 'center',
       }}
     >
+      <MainHeader />
       <Carousel
         loop={false}
         style={{
@@ -93,15 +99,15 @@ const MatchingScreen = () => {
         }}
         width={window.width}
         fixedDirection="negative"
-        renderItem={({ index, item }) => <Item key={index} url={item} />}
+        renderItem={({ index, item }) => <ItemCard key={index} url={item} />}
         customAnimation={animationStyle}
         windowSize={5}
       />
-    </View>
+    </ScreenContainer>
   );
 };
 
-const Item = (props: { url: string }) => {
+const ItemCard = (props: { url: string }) => {
   const width = window.width * 0.95;
 
   return (
@@ -125,6 +131,31 @@ const Item = (props: { url: string }) => {
             borderRadius: 20,
           }}
         />
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '50%',
+          }}
+        >
+          <LinearGradient
+            style={{ flex: 1 }}
+            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.5)']}
+          />
+        </View>
+        <View
+          style={{
+            position: 'absolute',
+            left: 0,
+            bottom: 0,
+            right: 0,
+            backgroundColor: 'red',
+          }}
+        >
+          <Text></Text>
+        </View>
       </View>
     </Animated.View>
   );

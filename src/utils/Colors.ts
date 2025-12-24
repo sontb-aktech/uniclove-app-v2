@@ -25,3 +25,5 @@ export const DarkStyle: typeof LightStyle = {
   error: '#FF0000',
   errorContainer: '#FFF8F5',
 };
+
+export type ColorType = typeof LightStyle;
