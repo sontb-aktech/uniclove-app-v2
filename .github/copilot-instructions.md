@@ -1,3 +1,59 @@
+# Copilot / AI Agent Instructions — Uniclove App
+
+Purpose: quickly onboard an AI coding agent to be productive in this React Native + TypeScript app.
+
+1) Big picture
+- App entry: [src/App.tsx](src/App.tsx#L1) composes global providers: `ThemeProvider`, `LocalizationProvider`, Redux store (`stores`), `PersistGate`, and `NavigationContainer` which mounts `Nav` ([src/Nav.tsx](src/Nav.tsx#L1)).
+- Navigation routing lives in `src/Nav.tsx`; use `src/NavigationService.ts` for programmatic navigation.
+- Chat/AI surface: streaming chat logic and helpers live in [src/ChatGPTProvider.tsx](src/ChatGPTProvider.tsx#L1) and `components/ChatGPTRoot`. The provider exposes `ChatGPTPContext` with `postStreamedMessage` and `onChatGPTStop`.
+
+2) Where to look first (quick map)
+- App bootstrap: [src/App.tsx](src/App.tsx#L1)
+- Router: [src/Nav.tsx](src/Nav.tsx#L1) and navigation helper: [src/NavigationService.ts](src/NavigationService.ts#L1)
+- Screens barrel: `src/screens/index` — Nav imports named exports from there
+- State: `src/stores` (Redux + persistor)
+- Cross-cutting helpers: `src/helpers` (Firebase, Notification, TTS, Analytics)
+- Chat/AI: [src/ChatGPTProvider.tsx](src/ChatGPTProvider.tsx#L1) and `components/ChatGPTRoot`
+
+3) Important workflows & commands
+- Install deps (Yarn v3/Berry):
+
+```bash
+yarn install
+```
+- `patch-package` runs in `postinstall`. To create or update a patch use:
+
+```bash
+yarn create-patch
+```
+- Common scripts (see `package.json`): `yarn start`, `yarn android`, `yarn ios`, `yarn android-dev` (uses .env.dev), `yarn android-release-prod` (ENVFILE=.env.prod), `yarn test`, `yarn lint`.
+- When changing native iOS pods run:
+
+```bash
+cd ios && pod install
+```
+
+4) Project-specific conventions
+- Absolute imports are used widely (configured in `babel.config.js`/`metro.config.js`); prefer imports like `import { LocalizationProvider } from 'LocalizationProvider'` over deep relative paths.
+- Screens are exported from `src/screens/index`. When adding a screen, export it from the barrel and register it in `src/Nav.tsx`.
+- Centralize platform/native calls in `src/helpers` (e.g., `FirebaseAnalyticHelper`, `NotificationHelper`, `TextToSpeechHelper`). Reuse helpers rather than duplicating native bridging logic.
+
+5) Integrations & cross-component patterns
+- Firebase: `@react-native-firebase/*` packages are used across helpers.
+- Chat streaming: conversations flow through `ChatGPTProvider` -> `ChatGPTRoot` -> UI components; use `ChatGPTPContext` for posting messages and handling stop events.
+- Navigation + state: screens expect Redux + persisted state; keep provider ordering in `src/App.tsx` when modifying providers.
+
+6) Build caveats & PR checklist
+- Do not remove `postinstall` or the `patches/` directory — native module fixes live there.
+- Run `yarn lint` and `yarn test` before PRs.
+- If you change native modules, run `yarn create-patch` and commit the new patch under `patches/`.
+- If adding UI screens, export them from `src/screens/index` and wire them in `src/Nav.tsx`.
+
+7) Fast examples
+- Programmatic navigation: `NavigationService.navigate('MainTabScreen', { screen: 'HomeScreen' })` ([src/NavigationService.ts](src/NavigationService.ts#L1)).
+- Post a streaming chat message: call `ChatGPTPContext.postStreamedMessage()` from a component consuming the context ([src/ChatGPTProvider.tsx](src/ChatGPTProvider.tsx#L1)).
+
+If you want, I can expand any section with: (a) a list of helper methods in `src/helpers`, (b) common Jest test examples, or (c) a sample PR checklist file. Tell me which one to expand.
 # Copilot / AI Agent Instructions for this repo
 
 Purpose: give an AI coding agent the exact, actionable knowledge to be productive in this React Native app.
