@@ -80,6 +80,7 @@
     "react-native-iap": "^14.6.2",
     "react-native-image-crop-picker": "^0.51.1",
     "react-native-in-app-review": "^4.4.2",
+    "react-native-keyboard-controller": "^1.20.2",
     "react-native-linear-gradient": "next",
     "react-native-localization": "^2.3.2",
     "react-native-localize": "^3.6.0",

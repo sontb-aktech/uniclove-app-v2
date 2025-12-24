@@ -4,18 +4,19 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useTheme from 'hooks/useTheme';
 import LinearGradient from 'react-native-linear-gradient';
 import { useAppSelector } from 'stores';
+import NavigationService from 'NavigationService';
 
 const MainHeader = () => {
   const insets = useSafeAreaInsets();
   const { themeStyle } = useTheme();
-  const userInfo: any = useAppSelector(state => state.user.userInfo);
 
   return (
     <View
       style={[
         styles.container,
         {
-          paddingTop: insets.top ? insets.top : 12,
+          paddingHorizontal: 10,
+          paddingTop: insets.top,
           backgroundColor: themeStyle.surface,
         },
       ]}
@@ -36,7 +37,12 @@ const MainHeader = () => {
             />
           </TouchableOpacity>
           {/* Gradient bordered avatar */}
-          <TouchableOpacity style={styles.avatarTouch}>
+          <TouchableOpacity
+            style={styles.avatarTouch}
+            onPress={() => {
+              NavigationService.navigate('ProfileScreen');
+            }}
+          >
             <LinearGradient
               colors={['#67A4FF', '#0786FF']}
               style={styles.gradientBorder}
@@ -57,16 +63,14 @@ const MainHeader = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 12,
     width: '100%',
     borderBottomWidth: 0,
-    // subtle shadow
+    marginBottom: 19,
   },
   inner: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 56,
   },
   logo: {
     width: 147,

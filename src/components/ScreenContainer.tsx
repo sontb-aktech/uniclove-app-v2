@@ -93,69 +93,67 @@ const ScreenContainer = (props: {
       >
         {!props.hideHeader && (
           <View style={[styles.header, props.headerStyle, {}]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              {!props.disableBack ? (
-                <Pressable
-                  style={[styles.btnBack]}
-                  hitSlop={10}
-                  onPress={() => {
-                    props.onPressBack ? props.onPressBack() : common.goBack();
-                  }}
-                >
-                  <ImageIcon
-                    size={24}
-                    source={require('assets/ic_back.png')}
-                    tintColor={themeStyle.primary}
-                  />
-                </Pressable>
-              ) : (
-                <View style={{ width: 18 }} />
-              )}
-
-              <CustomText fontStyleType="header-medium" numberOfLines={1}>
-                {props?.title}
-              </CustomText>
-
-              <View
-                style={{
-                  justifyContent: 'flex-end',
-                  alignItems: 'center',
-                  flexDirection: 'row',
+            {!props.disableBack ? (
+              <Pressable
+                style={[styles.btnBack]}
+                hitSlop={10}
+                onPress={() => {
+                  props.onPressBack ? props.onPressBack() : common.goBack();
                 }}
               >
-                {props.listButtonRight?.map((item, index) => {
-                  if (item.button) {
-                    return (
-                      <Pressable
-                        key={index}
-                        hitSlop={10}
-                        onPress={item.onPress}
-                      >
-                        {item.button}
-                      </Pressable>
-                    );
-                  }
+                <ImageIcon
+                  size={24}
+                  source={require('assets/ic_back.png')}
+                  tintColor={themeStyle.primary}
+                />
+              </Pressable>
+            ) : (
+              <View style={{ width: 18 }} />
+            )}
+
+            <CustomText
+              fontStyleType="header-medium"
+              numberOfLines={1}
+              style={{ flex: 1, marginLeft: 12 }}
+            >
+              {props?.title}
+            </CustomText>
+
+            <View
+              style={{
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}
+            >
+              {props.listButtonRight?.map((item, index) => {
+                if (item.button) {
                   return (
-                    <Pressable
-                      style={[styles.button, !!item.text && { width: 'auto' }]}
-                      onPress={item.onPress}
-                      key={index}
-                    >
-                      {!!item.text ? (
-                        <CustomText
-                          style={{
-                            textDecorationLine: 'underline',
-                          }}
-                        >
-                          {item.text}
-                        </CustomText>
-                      ) : (
-                        <ImageIcon source={item.source} size={24} />
-                      )}
+                    <Pressable key={index} hitSlop={10} onPress={item.onPress}>
+                      {item.button}
                     </Pressable>
                   );
-                })}
-              </View>
+                }
+                return (
+                  <Pressable
+                    style={[styles.button, !!item.text && { width: 'auto' }]}
+                    onPress={item.onPress}
+                    key={index}
+                  >
+                    {!!item.text ? (
+                      <CustomText
+                        style={{
+                          textDecorationLine: 'underline',
+                        }}
+                      >
+                        {item.text}
+                      </CustomText>
+                    ) : (
+                      <ImageIcon source={item.source} size={24} />
+                    )}
+                  </Pressable>
+                );
+              })}
             </View>
           </View>
         )}

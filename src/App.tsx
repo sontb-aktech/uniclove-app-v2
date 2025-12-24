@@ -1,29 +1,30 @@
-import {CacheManager} from '@georstat/react-native-image-cache';
+import { CacheManager } from '@georstat/react-native-image-cache';
 import {
   DefaultTheme,
   NavigationContainer,
   NavigationState,
 } from '@react-navigation/native';
-import {LocalizationProvider} from 'LocalizationProvider';
+import { LocalizationProvider } from 'LocalizationProvider';
 import Nav from 'Nav';
-import {navigationRef} from 'NavigationService';
-import {ThemeProvider} from 'ThemeProvider';
+import { navigationRef } from 'NavigationService';
+import { ThemeProvider } from 'ThemeProvider';
 import FirebaseAnalyticHelper from 'helpers/FirebaseAnalyticHelper';
 import FirebaseAppCheckHelper from 'helpers/FirebaseAppCheckHelper';
 import FirebaseCrashlyticHelper from 'helpers/FirebaseCrashlyticHelper';
 import GoogleSignInHelper from 'helpers/GoogleSignInHelper';
 import NotificationHelper from 'helpers/NotificationHelper';
-import React, {useEffect} from 'react';
-import {LogBox} from 'react-native';
-import {Dirs} from 'react-native-file-access';
-import {Host} from 'react-native-portalize';
+import React, { useEffect } from 'react';
+import { LogBox } from 'react-native';
+import { Dirs } from 'react-native-file-access';
+import { Host } from 'react-native-portalize';
 import {
   initialWindowMetrics,
   SafeAreaProvider,
 } from 'react-native-safe-area-context';
-import {Provider as ReduxProvider} from 'react-redux';
-import {PersistGate} from 'redux-persist/integration/react';
-import store, {persistor} from 'stores';
+import { Provider as ReduxProvider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import store, { persistor } from 'stores';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 LogBox.ignoreLogs([
   'new NativeEventEmitter',
   'ReactImageView: Image',
@@ -99,27 +100,30 @@ const App = () => {
     <ReduxProvider store={store}>
       <PersistGate persistor={persistor}>
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-          <ThemeProvider>
-            <LocalizationProvider>
-              <NavigationContainer
-                ref={navigationRef}
-                theme={navTheme}
-                linking={linking}
-                onReady={() => {}}
-                onStateChange={state => {
-                  if (!state) return;
-                  const currentRoute = getActiveRouteName(state);
-                  if (currentRoute) {
-                    FirebaseAnalyticHelper.logScreenView(currentRoute);
-                    FirebaseCrashlyticHelper.logScreen(currentRoute);
-                  }
-                }}>
-                <Host>
-                  <Nav />
-                </Host>
-              </NavigationContainer>
-            </LocalizationProvider>
-          </ThemeProvider>
+          <KeyboardProvider>
+            <ThemeProvider>
+              <LocalizationProvider>
+                <NavigationContainer
+                  ref={navigationRef}
+                  theme={navTheme}
+                  linking={linking}
+                  onReady={() => {}}
+                  onStateChange={state => {
+                    if (!state) return;
+                    const currentRoute = getActiveRouteName(state);
+                    if (currentRoute) {
+                      FirebaseAnalyticHelper.logScreenView(currentRoute);
+                      FirebaseCrashlyticHelper.logScreen(currentRoute);
+                    }
+                  }}
+                >
+                  <Host>
+                    <Nav />
+                  </Host>
+                </NavigationContainer>
+              </LocalizationProvider>
+            </ThemeProvider>
+          </KeyboardProvider>
         </SafeAreaProvider>
       </PersistGate>
     </ReduxProvider>
