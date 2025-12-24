@@ -16,6 +16,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import Carousel, { TAnimationStyle } from 'react-native-reanimated-carousel';
 import MainHeader from 'screens/components/MainHeader';
+import CardItem from './components/CardItem';
+import CustomImage from 'components/image/CustomImage';
 
 const window = Dimensions.get('window');
 // const data = getImages();
@@ -80,82 +82,46 @@ const MatchingScreen = () => {
       }}
     >
       <MainHeader />
-      <Carousel
-        loop={false}
-        style={{
-          width: PAGE_WIDTH,
-          height: PAGE_HEIGHT,
-        }}
-        defaultIndex={0}
-        vertical={false}
-        data={data}
-        onConfigurePanGesture={g => {
-          g.onChange(e => {
-            'worklet';
-            directionAnimVal.value = Math.sign(e.translationX);
-          });
-        }}
-        width={window.width}
-        fixedDirection="negative"
-        renderItem={({ index, item }) => <ItemCard key={index} url={item} />}
-        customAnimation={animationStyle}
-        windowSize={5}
-      />
-    </ScreenContainer>
-  );
-};
-
-const ItemCard = (props: { url: string }) => {
-  const width = window.width * 0.95;
-
-  return (
-    <Animated.View
-      entering={FadeInDown.duration(300)}
-      style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-    >
-      <View
-        style={{
-          width,
-          aspectRatio: 374 / 594,
-          borderRadius: 48,
-          overflow: 'hidden',
-        }}
-      >
-        <Image
-          source={{ uri: props.url }}
+      <View>
+        <Carousel
+          loop={false}
           style={{
-            width,
-            aspectRatio: 374 / 594,
-            borderRadius: 20,
+            width: PAGE_WIDTH,
+            height: PAGE_HEIGHT,
+            zIndex: 10,
           }}
+          defaultIndex={0}
+          vertical={false}
+          data={data}
+          onConfigurePanGesture={g => {
+            g.onChange(e => {
+              'worklet';
+              directionAnimVal.value = Math.sign(e.translationX);
+            });
+          }}
+          width={window.width}
+          fixedDirection="negative"
+          renderItem={({ index, item }) => <CardItem key={index} url={item} />}
+          customAnimation={animationStyle}
+          windowSize={5}
         />
-        <View
+        <CustomImage
           style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '50%',
+            width: '100%',
+            aspectRatio: 870 / 332,
+            flexDirection: 'row',
+            alignSelf: 'center',
+            marginTop: '-30%',
           }}
-        >
-          <LinearGradient
-            style={{ flex: 1 }}
-            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.5)']}
+          source={require('assets/img_card_blur.png')}
+        />
+        {/* <Image
+            source={require('assets/img_card_blur.png')}
+            style={{ flex: 1, aspectRatio: 870 / 332 }}
           />
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            left: 0,
-            bottom: 0,
-            right: 0,
-            backgroundColor: 'red',
-          }}
-        >
-          <Text></Text>
-        </View>
+        </View> */}
       </View>
-    </Animated.View>
+    </ScreenContainer>
   );
 };
 
