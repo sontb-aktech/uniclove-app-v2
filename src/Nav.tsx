@@ -21,6 +21,7 @@ import {
   SurveyStep3Screen,
   ProfileScreen,
   EditProfileScreen,
+  ListFriendScreen,
 } from 'screens';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -70,6 +71,7 @@ const Nav = () => {
       <Stack.Screen name="SurveyStep3Screen" component={SurveyStep3Screen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
+      <Stack.Screen name="ListFriendScreen" component={ListFriendScreen} />
     </Stack.Navigator>
   );
 };

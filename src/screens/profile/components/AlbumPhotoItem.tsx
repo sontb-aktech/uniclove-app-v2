@@ -11,13 +11,8 @@ interface AlbumPhotoItemProps {
   onRemove: () => void;
 }
 
-const AlbumPhotoItem: React.FC<AlbumPhotoItemProps> = ({
-  id,
-  image,
-  isDefault,
-  onPress,
-  onRemove,
-}) => {
+const AlbumPhotoItem = (props: AlbumPhotoItemProps) => {
+  const { id, image, isDefault, onPress, onRemove } = props;
   return (
     <View key={id} style={styles.photoContainer}>
       <Image

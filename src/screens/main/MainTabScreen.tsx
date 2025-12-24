@@ -68,7 +68,6 @@ const MainTabScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <MainHeader />
       <Tab.Navigator
         tabBar={props => {
           return (

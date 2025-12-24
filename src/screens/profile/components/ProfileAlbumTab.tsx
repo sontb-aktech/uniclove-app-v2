@@ -34,7 +34,6 @@ const ProfileAlbumTab: React.FC<ProfileAlbumTabProps> = ({
 
   const renderAlbumRow = (row: Photo[], rowIndex: number) => (
     <View key={`row-${rowIndex}`} style={styles.albumRow}>
-      {/* Curved Chain (Dây treo) */}
       <View style={styles.chainContainer}>
         <Image
           source={require('assets/img_curved_chain.png')}

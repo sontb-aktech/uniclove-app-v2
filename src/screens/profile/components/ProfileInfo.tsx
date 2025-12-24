@@ -3,6 +3,7 @@ import { StyleSheet, View, TouchableOpacity, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from 'components/text/CustomText';
 import ImageIcon from 'components/image/ImageIcon';
+import NavigationService from 'NavigationService';
 
 const TAB_PADDING = 20;
 const TAB_GAP = 12;
@@ -31,33 +32,47 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({
 }) => {
   return (
     <View style={styles.infoSection}>
-      <CustomText style={styles.userName}>{userName}</CustomText>
+      <CustomText fontStyleType="header-medium" style={styles.userName}>
+        {userName}
+      </CustomText>
 
-      {/* Stats */}
       <View style={styles.statsContainer}>
-        <View style={styles.statView}>
+        {/* <View style={styles.statView}>
           <CustomText style={styles.statText}>
             <CustomText style={{ fontWeight: '600' }}>{matches}</CustomText>
             {' Độ match    '}
           </CustomText>
-        </View>
-        <View style={styles.statView}>
+        </View> */}
+        <TouchableOpacity
+          style={styles.statView}
+          onPress={() => {
+            NavigationService.navigate('ListFriendScreen', {
+              activeTabIndex: 1,
+            });
+          }}
+        >
           <CustomText style={styles.statText}>
-            <CustomText style={{ fontWeight: '600' }}>{liking}</CustomText>
+            <CustomText fontStyleType="text-semibold">{liking}</CustomText>
             {' Đang thích'}
           </CustomText>
-        </View>
-      </View>
-      <View style={styles.statView}>
-        <CustomText style={styles.statText}>
-          <CustomText style={{ fontWeight: '600' }}>{liked}</CustomText>
-          {' lượt thích'}
-        </CustomText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.statView}
+          onPress={() => {
+            NavigationService.navigate('ListFriendScreen', {
+              activeTabIndex: 2,
+            });
+          }}
+        >
+          <CustomText style={styles.statText}>
+            <CustomText fontStyleType="text-semibold">{liked}</CustomText>
+            {' lượt thích'}
+          </CustomText>
+        </TouchableOpacity>
       </View>
 
-      {/* Edit Profile Button */}
       <TouchableOpacity style={styles.editButton} onPress={onEditProfile}>
-        <CustomText style={styles.editButtonText}>
+        <CustomText fontStyleType="text-regular" style={styles.editButtonText}>
           Chỉnh sửa trang cá nhân
         </CustomText>
         <ImageIcon source={require('assets/ic_edit_pencil.png')} size={16} />
@@ -70,15 +85,15 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({
           onPress={() => onTabChange('info')}
           activeOpacity={0.7}
         >
-          {activeTab === 'info' ? (
-            <LinearGradient
-              colors={['#67A4FF', '#0786FF']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.tabActiveButton}
-            >
-              <CustomText style={styles.tabTextActive}>Thông tin</CustomText>
-            </LinearGradient>
+          {activeTab == 'info' ? (
+            <View style={styles.tabActiveButton}>
+              <CustomText
+                fontStyleType="text-semibold"
+                style={styles.tabTextActive}
+              >
+                Thông tin
+              </CustomText>
+            </View>
           ) : (
             <View style={styles.tabInactiveButton}>
               <CustomText style={styles.tabText}>Thông tin</CustomText>
@@ -92,14 +107,14 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({
           activeOpacity={0.7}
         >
           {activeTab === 'album' ? (
-            <LinearGradient
-              colors={['#67A4FF', '#0786FF']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.tabActiveButton}
-            >
-              <CustomText style={styles.tabTextActive}>Album</CustomText>
-            </LinearGradient>
+            <View style={styles.tabActiveButton}>
+              <CustomText
+                fontStyleType="text-semibold"
+                style={styles.tabTextActive}
+              >
+                Album
+              </CustomText>
+            </View>
           ) : (
             <View style={styles.tabInactiveButton}>
               <CustomText style={styles.tabText}>Album</CustomText>
@@ -120,9 +135,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   userName: {
-    fontWeight: '500',
     marginBottom: 8,
-    fontSize: 20,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -131,10 +144,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     gap: 8,
   },
-  statText: {
-    fontSize: 14,
-    color: '#242426',
-  },
+  statText: {},
   statView: {
     backgroundColor: '#F5FAFF',
     padding: 8,
@@ -150,7 +160,6 @@ const styles = StyleSheet.create({
   },
   editButtonText: {
     color: '#0786FF',
-    fontSize: 14,
   },
   tabsContainer: {
     flexDirection: 'row',
@@ -165,6 +174,8 @@ const styles = StyleSheet.create({
   tabActiveButton: {
     height: 34,
     borderRadius: 12,
+    width: '100%',
+    backgroundColor: '#0786FF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -183,6 +194,5 @@ const styles = StyleSheet.create({
   tabTextActive: {
     fontSize: 14,
     color: '#FFFFFF',
-    fontWeight: '600',
   },
 });

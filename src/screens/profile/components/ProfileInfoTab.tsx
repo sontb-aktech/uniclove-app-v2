@@ -18,28 +18,36 @@ const ProfileInfoTab: React.FC<ProfileInfoTabProps> = ({
 }) => {
   return (
     <View style={styles.contentSection}>
-      {/* Bio Section */}
       <View style={styles.section}>
-        <CustomText style={styles.sectionTitle}>Giới thiệu</CustomText>
+        <CustomText fontStyleType="title-semibold" style={styles.sectionTitle}>
+          Giới thiệu
+        </CustomText>
         <CustomText style={styles.bioText}>
           {userName} <Text style={{ color: '#007AFF' }}>♂</Text> {age} tuổi
         </CustomText>
-        <CustomText style={styles.bioDescription} numberOfLines={3}>
+        <CustomText
+          fontStyleType="text-regular"
+          style={styles.bioDescription}
+          numberOfLines={3}
+        >
           {bio}
         </CustomText>
         <Pressable>
-          <CustomText style={styles.readMore}>Xem thêm</CustomText>
+          <CustomText fontStyleType="text-regular" style={styles.readMore}>
+            Xem thêm
+          </CustomText>
         </Pressable>
       </View>
 
-      {/* Location Section */}
       <View style={styles.section}>
         <CustomText fontStyleType="title-semibold" style={styles.sectionTitle}>
           Địa điểm
         </CustomText>
         <View style={styles.locationRow}>
           <IconFeather name="map-pin" size={16} color={'#969696'} />
-          <CustomText style={styles.locationText}>{location}</CustomText>
+          <CustomText fontStyleType="text-regular" style={styles.locationText}>
+            {location}
+          </CustomText>
         </View>
       </View>
     </View>
@@ -57,7 +65,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     marginBottom: 12,
-    fontWeight: '600',
     fontSize: 16,
   },
   bioText: {
@@ -81,7 +88,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   locationText: {
-    fontSize: 14,
     color: '#969696',
   },
 });

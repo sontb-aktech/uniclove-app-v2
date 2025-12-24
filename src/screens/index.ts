@@ -23,7 +23,7 @@ export { default as ChatScreen } from './chat/ChatScreen';
 export { default as NearbyScreen } from './nearby/NearbyScreen';
 export { default as ProfileScreen } from './profile/ProfileScreen';
 export { default as EditProfileScreen } from './profile/EditProfileScreen';
-
+export { default as ListFriendScreen } from './profile/ListFriendScreen';
 export type RootStackParamList = {
   ToolsScreen: undefined;
   HomeScreen: undefined;
@@ -49,4 +49,7 @@ export type RootStackParamList = {
   NearbyScreen: undefined;
   ProfileScreen: undefined;
   EditProfileScreen: undefined;
+  ListFriendScreen: {
+    activeTabIndex?: number;
+  };
 };

@@ -12,6 +12,7 @@ import { BlurView } from '@danielsaraldi/react-native-blur-view';
 import { IconFeather } from 'libs';
 import ImageIcon from 'components/image/ImageIcon';
 import CustomText from 'components/text/CustomText';
+import Avatar from 'components/image/Avatar';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const COVER_HEIGHT = 260;
@@ -71,7 +72,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     <View style={styles.headerContainer}>
       {renderCoverImage()}
 
-      {/* Button thay ảnh bìa */}
       <Pressable style={styles.changePhotoButton} onPress={onPickCoverImage}>
         <BlurView
           style={styles.changePhotoBlur}
@@ -84,33 +84,15 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           size={16}
           tintColor="#fff"
         />
-        <CustomText style={styles.changePhotoText}>
-          {coverImage ? 'Thay ảnh bìa' : 'Thêm ảnh bìa'}
-        </CustomText>
+        <CustomText style={styles.changePhotoText}>Thay ảnh bìa</CustomText>
       </Pressable>
 
-      {/* Button xóa ảnh bìa */}
-      {coverImage && (
-        <TouchableOpacity
-          style={styles.removeCoverButton}
-          onPress={onRemoveCoverImage}
-        >
-          <IconFeather name="x" size={16} color="#fff" />
-        </TouchableOpacity>
-      )}
-
-      {/* Avatar */}
       <View style={styles.avatarContainer}>
-        <LinearGradient
-          colors={['#FF8BA3', '#FF0990']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.avatarBorder}
-        />
-        <Image
-          source={{ uri: avatarUrl }}
-          style={styles.avatar}
-          resizeMode="cover"
+        <Avatar
+          source={{ uri: 'https://picsum.photos/id/1011/800/600' }}
+          sizeType="large"
+          isShowBorder
+          borderColor="#FF0990"
         />
       </View>
     </View>

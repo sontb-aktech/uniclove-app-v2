@@ -10,7 +10,7 @@ import {
   Platform,
   Modal,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ScreenContainer from 'components/ScreenContainer';
 import CustomText from 'components/text/CustomText';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -42,7 +42,10 @@ const EditProfileScreen = () => {
   const [showExitModal, setShowExitModal] = useState(false);
 
   // Hàm chọn ảnh đại diện
+  const isPickingAvatarRef = useRef(false);
   const handlePickAvatar = async () => {
+    if (isPickingAvatarRef.current) return;
+    isPickingAvatarRef.current = true;
     try {
       const image = await ImagePicker.openPicker({
         width: 400,
@@ -52,11 +55,16 @@ const EditProfileScreen = () => {
         compressImageQuality: 0.8,
         mediaType: 'photo',
       });
-      setAvatar(image.path);
+      if (image && image.path) setAvatar(image.path);
     } catch (error: any) {
-      if (error.code !== 'E_PICKER_CANCELLED') {
+      if (error && error.code === 'E_PICKER_CANCELLED') {
+        // user cancelled
+      } else {
+        console.warn('handlePickAvatar error:', error);
         Alert.alert('Lỗi', 'Không thể chọn ảnh. Vui lòng thử lại.');
       }
+    } finally {
+      isPickingAvatarRef.current = false;
     }
   };
 

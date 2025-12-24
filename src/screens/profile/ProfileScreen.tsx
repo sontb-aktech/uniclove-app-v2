@@ -1,5 +1,5 @@
 import { StyleSheet, View, ScrollView, Alert } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ScreenContainer from 'components/ScreenContainer';
 import ImagePicker from 'react-native-image-crop-picker';
 import ProfileHeader from './components/ProfileHeader';
@@ -51,7 +51,11 @@ const ProfileScreen = () => {
     location: 'Sống tại Hà Nội',
   };
 
+  const isPickingCoverRef = useRef(false);
+
   const handlePickCoverImage = async () => {
+    if (isPickingCoverRef.current) return; // already picking
+    isPickingCoverRef.current = true;
     try {
       const image = await ImagePicker.openPicker({
         width: 1200,
@@ -61,11 +65,15 @@ const ProfileScreen = () => {
         compressImageQuality: 0.8,
         mediaType: 'photo',
       });
-      setCoverImage(image.path);
+      if (image && image.path) setCoverImage(image.path);
     } catch (error: any) {
-      if (error.code !== 'E_PICKER_CANCELLED') {
+      if (error && error.code === 'E_PICKER_CANCELLED') {
+      } else {
+        console.warn('handlePickCoverImage error:', error);
         Alert.alert('Lỗi', 'Không thể chọn ảnh bìa. Vui lòng thử lại.');
       }
+    } finally {
+      isPickingCoverRef.current = false;
     }
   };
 
@@ -85,7 +93,11 @@ const ProfileScreen = () => {
     );
   };
 
+  const isPickingAlbumRef = useRef<Record<number, boolean>>({});
+
   const handlePickAlbumImage = async (photoId: number) => {
+    if (isPickingAlbumRef.current[photoId]) return;
+    isPickingAlbumRef.current[photoId] = true;
     try {
       const image = await ImagePicker.openPicker({
         width: 800,
@@ -96,17 +108,24 @@ const ProfileScreen = () => {
         mediaType: 'photo',
       });
 
-      setAlbumPhotos(prevPhotos =>
-        prevPhotos.map(photo =>
-          photo.id === photoId
-            ? { ...photo, image: { uri: image.path }, isDefault: false }
-            : photo,
-        ),
-      );
+      if (image && image.path) {
+        setAlbumPhotos(prevPhotos =>
+          prevPhotos.map(photo =>
+            photo.id === photoId
+              ? { ...photo, image: { uri: image.path }, isDefault: false }
+              : photo,
+          ),
+        );
+      }
     } catch (error: any) {
-      if (error.code !== 'E_PICKER_CANCELLED') {
+      if (error && error.code === 'E_PICKER_CANCELLED') {
+        // ignore
+      } else {
+        console.warn('handlePickAlbumImage error:', error);
         Alert.alert('Lỗi', 'Không thể chọn ảnh. Vui lòng thử lại.');
       }
+    } finally {
+      isPickingAlbumRef.current[photoId] = false;
     }
   };
 
