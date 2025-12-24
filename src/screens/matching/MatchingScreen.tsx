@@ -7,8 +7,11 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import Carousel, { TAnimationStyle } from 'react-native-reanimated-carousel';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const window = Dimensions.get('window');
+const width = Dimensions.get('window').width;
+const imageWidth = (width * 1) / 3;
 // const data = getImages();
 
 const data = [
@@ -19,7 +22,7 @@ const data = [
 ];
 
 const MatchingScreen = () => {
-  const headerHeight = 100;
+  const headerHeight = 250;
   const PAGE_WIDTH = window.width;
   const PAGE_HEIGHT = window.height - headerHeight;
 

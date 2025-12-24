@@ -20,6 +20,7 @@ import { useAppSelector } from 'stores';
 import useTrans from 'hooks/useTrans';
 import TabBarIcon, { TabBarConfigType } from './components/tabBar/TabBarIcon';
 import CustomTabBar from './components/tabBar/CustomTabBar';
+import MainHeader from 'components/Header/MainHeader';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 const TabBarConfig: TabBarConfigType = {
@@ -67,6 +68,7 @@ const MainTabScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
+      <MainHeader />
       <Tab.Navigator
         tabBar={props => {
           return (
