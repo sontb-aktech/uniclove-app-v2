@@ -10,6 +10,7 @@ export const LightStyle = {
   onSurfaceVariant: '#969696',
   error: '#FF0000',
   errorContainer: '#FFF8F5',
+  secondary: '#ff69b4',
 };
 
 export const DarkStyle: typeof LightStyle = {
@@ -24,6 +25,7 @@ export const DarkStyle: typeof LightStyle = {
   onSurfaceVariant: '#969696',
   error: '#FF0000',
   errorContainer: '#FFF8F5',
+  secondary: '#ff69b4',
 };
 
 export type ColorType = typeof LightStyle;

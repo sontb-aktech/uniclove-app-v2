@@ -6,6 +6,7 @@ import React from 'react';
 import {
   Dimensions,
   Image,
+  ImageSourcePropType,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -17,29 +18,55 @@ import Animated, {
   FadeInDown,
   useAnimatedStyle,
   interpolateColor,
+  useSharedValue,
+  withTiming,
+  ZoomIn,
+  ZoomOut,
 } from 'react-native-reanimated';
-import type { SharedValue } from 'react-native-reanimated';
 const window = Dimensions.get('window');
 
 const CardItem = (props: {
-  url: string;
-  swipeProgress?: SharedValue<number>;
+  source: ImageSourcePropType;
+  swipeDirection?: string | null;
+  isTop?: boolean;
 }) => {
   const cardWidth = window.width * 0.95;
   const { themeStyle } = useTheme();
   const surfaceColor = themeStyle.surface;
-  console.log('--- swipeProgress', props.swipeProgress?.value);
+  const heartVal = useSharedValue(0);
+  const closeVal = useSharedValue(0);
+
+  // animate based on swipeDirection prop
+  React.useEffect(() => {
+    // Only animate when this card is the top/active card
+    if (props.isTop) {
+      const dir = props.swipeDirection ?? null;
+      if (dir === 'right') {
+        heartVal.value = withTiming(1, { duration: 500 });
+        closeVal.value = withTiming(0, { duration: 500 });
+      } else if (dir === 'left' || dir === 'top' || dir === 'bottom') {
+        closeVal.value = withTiming(1, { duration: 500 });
+        heartVal.value = withTiming(0, { duration: 500 });
+      } else {
+        closeVal.value = withTiming(0, { duration: 120 });
+        heartVal.value = withTiming(0, { duration: 120 });
+      }
+    } else {
+      // reset when not top
+      closeVal.value = withTiming(0, { duration: 120 });
+      heartVal.value = withTiming(0, { duration: 120 });
+    }
+  }, [props.swipeDirection, props.isTop, heartVal, closeVal]);
+  const heartAnimatedStyle = useAnimatedStyle(() => {
+    const bg = interpolateColor(heartVal.value, [0, 1], ['#3A3D45', '#ff69b4']);
+    return { backgroundColor: bg };
+  });
 
   const closeAnimatedStyle = useAnimatedStyle(() => {
-    const progress = props.swipeProgress ? props.swipeProgress.value : 0;
-    const color = interpolateColor(
-      progress,
-      [0, -1],
-      [surfaceColor, '#0786FF'],
-    );
-    return { tintColor: color } as any;
+    const bg = interpolateColor(closeVal.value, [0, 1], ['#3A3D45', '#0786FF']);
+    return { backgroundColor: bg };
   });
-  // console.log('--- closeAnimatedStyle', closeAnimatedStyle);
+
   return (
     <Animated.View
       entering={FadeInDown.duration(300)}
@@ -54,13 +81,27 @@ const CardItem = (props: {
         }}
       >
         <Image
-          source={{ uri: props.url }}
+          source={props.source}
           style={{
             width: cardWidth,
             aspectRatio: 374 / 594,
             borderRadius: 20,
           }}
         />
+        {props.swipeDirection == 'right' && (
+          <Animated.View
+            style={{ position: 'absolute', left: 40, top: 40 }}
+            entering={ZoomIn}
+            exiting={ZoomOut}
+          >
+            <ImageIcon
+              source={require('assets/ic_heart.png')}
+              tintColor={themeStyle.secondary}
+              size={60}
+            />
+          </Animated.View>
+        )}
+
         <View
           style={{
             position: 'absolute',
@@ -123,28 +164,26 @@ const CardItem = (props: {
           </View>
           <View style={{ gap: 16 }}>
             <TouchableOpacity>
-              <BlurView style={styles.buttonContainer} targetId="aaa">
+              <Animated.View
+                style={[styles.buttonContainer, heartAnimatedStyle]}
+              >
+                <BlurView style={StyleSheet.absoluteFill} targetId="aaa" />
                 <ImageIcon
                   source={require('assets/ic_heart.png')}
                   tintColor={themeStyle.surface}
                 />
-              </BlurView>
+              </Animated.View>
             </TouchableOpacity>
             <TouchableOpacity>
-              <BlurView style={styles.buttonContainer} targetId="aaa">
-                {props.swipeProgress ? (
-                  <Animated.Image
-                    source={require('assets/ic_close.png')}
-                    style={[{ width: 22, height: 22 }, closeAnimatedStyle]}
-                    resizeMode="contain"
-                  />
-                ) : (
-                  <ImageIcon
-                    source={require('assets/ic_close.png')}
-                    tintColor={themeStyle.surface}
-                  />
-                )}
-              </BlurView>
+              <Animated.View
+                style={[styles.buttonContainer, closeAnimatedStyle]}
+              >
+                <BlurView style={StyleSheet.absoluteFill} targetId="aaa" />
+                <ImageIcon
+                  source={require('assets/ic_close.png')}
+                  tintColor={themeStyle.surface}
+                />
+              </Animated.View>
             </TouchableOpacity>
           </View>
         </View>
@@ -178,6 +217,7 @@ const styles = StyleSheet.create({
     borderRadius: 48,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
 });
 

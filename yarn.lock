@@ -4187,6 +4187,7 @@ __metadata:
     react-test-renderer: ^19.2.0
     redux: ^5.0.1
     redux-persist: ^6.0.0
+    rn-swiper-list: ^3.0.0
     typescript: ^5.8.3
   languageName: unknown
   linkType: soft
@@ -9910,7 +9911,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:^2.30.0":
+"react-native-gesture-handler@npm:*, react-native-gesture-handler@npm:^2.30.0":
   version: 2.30.0
   resolution: "react-native-gesture-handler@npm:2.30.0"
   dependencies:
@@ -10136,7 +10137,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:4.2.1":
+"react-native-reanimated@npm:*, react-native-reanimated@npm:4.2.1":
   version: 4.2.1
   resolution: "react-native-reanimated@npm:4.2.1"
   dependencies:
@@ -10273,7 +10274,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-worklets@npm:^0.7.1":
+"react-native-worklets@npm:*, react-native-worklets@npm:^0.7.1":
   version: 0.7.1
   resolution: "react-native-worklets@npm:0.7.1"
   dependencies:
@@ -10674,6 +10675,23 @@ __metadata:
   bin:
     rimraf: bin.js
   checksum: 87f4164e396f0171b0a3386cc1877a817f572148ee13a7e113b238e48e8a9f2f31d009a92ec38a591ff1567d9662c6b67fd8818a2dbbaed74bc26a87a2a4a9a0
+  languageName: node
+  linkType: hard
+
+"rn-swiper-list@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "rn-swiper-list@npm:3.0.0"
+  dependencies:
+    react-native-gesture-handler: "*"
+    react-native-reanimated: "*"
+    react-native-worklets: "*"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-gesture-handler: "*"
+    react-native-reanimated: "*"
+    react-native-worklets: "*"
+  checksum: 0f24ef74603bec4a398adc8cf82da9977a4a7c643831cc95947782db8bee2db1e094dafe04aa422cec392275838ce4351ba21f392e8b6902b19bd2c01163af45
   languageName: node
   linkType: hard
 
