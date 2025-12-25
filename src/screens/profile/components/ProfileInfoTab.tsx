@@ -3,19 +3,15 @@ import { StyleSheet, View, Text, Pressable } from 'react-native';
 import CustomText from 'components/text/CustomText';
 import { IconFeather } from 'libs';
 
-interface ProfileInfoTabProps {
+type ProfileInfoTabProps = {
   userName: string;
   age: number;
   bio: string;
   location: string;
-}
+};
 
-const ProfileInfoTab: React.FC<ProfileInfoTabProps> = ({
-  userName,
-  age,
-  bio,
-  location,
-}) => {
+const ProfileInfoTab = (props: ProfileInfoTabProps) => {
+  const { userName, age, bio, location } = props;
   return (
     <View style={styles.contentSection}>
       <View style={styles.section}>
