@@ -40,9 +40,9 @@ const CustomTabBar = ({
         style={[
           {
             position: 'absolute',
-            left: 0,
+            left: 40,
             bottom: 0,
-            right: 0,
+            right: 40,
             justifyContent: 'flex-end',
             // backgroundColor: themeStyle.itemBackground2,
             paddingBottom: insets.bottom,
