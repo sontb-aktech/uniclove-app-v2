@@ -25,8 +25,8 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 const width = Dimensions.get('window').width;
-const LIST_GENDER = ['Nam', 'Nữ', 'Giới tính khác'];
-const LIST_PROVINCE = [
+export const LIST_GENDER = ['Nam', 'Nữ', 'Giới tính khác'];
+export const LIST_PROVINCE = [
   'Hà Nội',
   'TP Hồ Chí Minh',
   'Hà Nội',

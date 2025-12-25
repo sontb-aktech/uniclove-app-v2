@@ -25,6 +25,12 @@ import ModalCenter from 'components/modal/ModalCenter';
 import ImageIcon from 'components/image/ImageIcon';
 import NavigationService from 'NavigationService';
 import GradientButton from 'components/button/GradientButton';
+import ListPicker from 'components/picker/ListPicker';
+import GroupRatio from 'components/ratio/GroupRatio';
+import DatePicker from 'components/picker/DatePicker';
+import moment from 'moment';
+import CustomInput from 'components/text/CustomInput';
+import { LIST_GENDER, LIST_PROVINCE } from 'screens/auth/CompleteProfileScreen';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -48,6 +54,7 @@ const formatBirthDate = (date: Date) => {
   const year = date.getFullYear();
   return `${day} / ${month} / ${year}`;
 };
+const width = Dimensions.get('window').width;
 
 const EditProfileScreen = () => {
   const insets = useSafeAreaInsets();
@@ -55,13 +62,11 @@ const EditProfileScreen = () => {
   const [avatar, setAvatar] = useState(
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
   );
-  const [fullName, setFullName] = useState('');
   const [birthDate, setBirthDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [gender, setGender] = useState<'male' | 'female' | 'other'>('male');
-  const [bio, setBio] = useState('');
-  const [hobbies, setHobbies] = useState('');
   const [showExitModal, setShowExitModal] = useState(false);
+  const [selectedGender, setSelectedGender] = useState<number>();
+  const [selectedProvinceIndex, setSelectedProvinceIndex] = useState<number>();
 
   const handlePickAvatar = async () => {
     if (isPickingAvatarRef.current) return;
@@ -151,141 +156,39 @@ const EditProfileScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Tên đầy đủ của bạn */}
-          <View style={styles.section}>
-            <CustomText style={styles.label}>Tên đầy đủ của bạn</CustomText>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
+          <View>
+            <View>
+              <CustomInput
                 placeholder="Nhập tên"
-                placeholderTextColor="#C7C7CD"
-                value={fullName}
-                onChangeText={setFullName}
+                style={styles.inputContainer}
+                iconRight={
+                  <ImageIcon source={require('assets/ic_persion.png')} />
+                }
+                label="Tên đầy đủ của bạn"
               />
-              <ImageIcon source={require('assets/ic_user.png')} size={20} />
+              <DatePicker
+                style={styles.inputContainer}
+                iconRight={
+                  <ImageIcon source={require('assets/ic_persion.png')} />
+                }
+                label=" Ngày sinh của bạn"
+                maxDate={moment().subtract(18, 'years').endOf('day').toDate()}
+              />
+              <GroupRatio
+                label="Giới tính"
+                listItems={LIST_GENDER}
+                style={styles.inputContainer}
+                currentIndex={selectedGender}
+                onPressItem={index => setSelectedGender(index)}
+              />
+              <CustomInput
+                placeholder="Nhập vài dòng giới thiệu"
+                style={styles.inputContainer}
+                label="Giới thiệu bản thân"
+                multiline
+              />
             </View>
           </View>
-
-          <View style={styles.section}>
-            <CustomText style={styles.label}>Ngày sinh của bạn</CustomText>
-            <TouchableOpacity
-              style={styles.inputContainer}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <CustomText style={styles.inputText}>
-                {formatBirthDate(birthDate)}
-              </CustomText>
-              <ImageIcon
-                source={require('assets/ic_calendars.png')}
-                size={20}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.section}>
-            <CustomText style={styles.label}>Giới tính</CustomText>
-            <View style={styles.genderContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.genderButton,
-                  {
-                    borderColor: gender == 'male' ? '#0786FF' : 'transparent',
-                    borderWidth: 1,
-                  },
-                ]}
-                onPress={() => setGender('male')}
-                activeOpacity={0.7}
-              >
-                <CustomText style={styles.genderText}>Nam</CustomText>
-                <View
-                  style={[
-                    styles.radioOuter,
-                    {
-                      borderColor: gender === 'male' ? '#0786FF' : '#969696',
-                    },
-                  ]}
-                >
-                  {gender === 'male' && <View style={styles.radioInner} />}
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.genderButton,
-                  {
-                    borderColor: gender == 'female' ? '#0786FF' : 'transparent',
-                    borderWidth: 1,
-                  },
-                ]}
-                onPress={() => setGender('female')}
-                activeOpacity={0.7}
-              >
-                <CustomText style={styles.genderText}>Nữ</CustomText>
-                <View
-                  style={[
-                    styles.radioOuter,
-                    {
-                      borderColor: gender === 'female' ? '#0786FF' : '#969696',
-                    },
-                  ]}
-                >
-                  {gender === 'female' && <View style={styles.radioInner} />}
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.genderButton,
-                  {
-                    borderColor: gender == 'other' ? '#0786FF' : 'transparent',
-                    borderWidth: 1,
-                  },
-                ]}
-                onPress={() => setGender('other')}
-                activeOpacity={0.7}
-              >
-                <CustomText style={styles.genderText}>
-                  Giới tính khác
-                </CustomText>
-                <View
-                  style={[
-                    styles.radioOuter,
-                    {
-                      borderColor: gender === 'other' ? '#0786FF' : '#969696',
-                    },
-                  ]}
-                >
-                  {gender === 'other' && <View style={styles.radioInner} />}
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <CustomText style={styles.label}>Giới thiệu bản thân</CustomText>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="Nhập vài dòng giới thiệu"
-              placeholderTextColor="#C7C7CD"
-              value={bio}
-              onChangeText={setBio}
-              multiline
-              numberOfLines={4}
-              textAlignVertical="top"
-            />
-          </View>
-
-          {/* Sở thích */}
-          {/* <View style={styles.section}>
-          <CustomText style={styles.label}>Sở thích</CustomText>
-          <TextInput
-            style={styles.input}
-            placeholder="Nhập sở thích của bạn"
-            placeholderTextColor="#C7C7CD"
-            value={hobbies}
-            onChangeText={setHobbies}
-          />
-        </View> */}
         </KeyboardAwareScrollView>
 
         <GradientButton
@@ -426,74 +329,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-
-  // Input styles
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5FAFF',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    height: 50,
-  },
-  input: {
-    flex: 1,
-    fontSize: 14,
-    color: '#1C1C1E',
-    paddingVertical: 0,
-  },
-  inputText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#1C1C1E',
-  },
-  inputIcon: {
-    marginLeft: 12,
-  },
-  textArea: {
-    backgroundColor: '#F5FAFF',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    height: 50,
-    textAlignVertical: 'top',
-  },
-
-  // Gender styles
-  genderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  genderButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#F5FAFF',
-    borderRadius: 16,
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 17,
-  },
-  radioOuter: {
-    width: 19,
-    height: 19,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: '#969696',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radioInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#0786FF',
-  },
-  genderText: {
-    fontSize: 14,
-  },
-
-  // Save button
   saveButtonContainer: {
     marginHorizontal: 20,
   },
@@ -569,5 +404,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FAFF',
     borderRadius: 16,
+  },
+  inputContainer: {
+    marginTop: 16,
   },
 });
