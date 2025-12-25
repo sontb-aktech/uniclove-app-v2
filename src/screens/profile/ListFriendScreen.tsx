@@ -12,12 +12,47 @@ import ImageIcon from 'components/image/ImageIcon';
 import useRouteParams from 'hooks/useRouteParams';
 import CustomText from 'components/text/CustomText';
 
+export type FriendLabelProps = {
+  active?: boolean;
+  label: string;
+};
+
 const DATA = [
-  { id: '1', name: 'Lê Văn Quang', avatar: 'https://i.pravatar.cc/150?img=10' },
-  { id: '2', name: 'Đào Dương', avatar: 'https://i.pravatar.cc/150?img=11' },
-  { id: '3', name: 'Lee Min Ho', avatar: 'https://i.pravatar.cc/150?img=12' },
-  { id: '4', name: 'Sơn Tùng MTP', avatar: 'https://i.pravatar.cc/150?img=13' },
-  { id: '5', name: 'Quang Đặng', avatar: 'https://i.pravatar.cc/150?img=14' },
+  {
+    id: '1',
+    name: 'Lê Văn Quang',
+    avatar: 'https://i.pravatar.cc/150?img=10',
+    age: 25,
+    distance: '5',
+  },
+  {
+    id: '2',
+    name: 'Đào Dương',
+    avatar: 'https://i.pravatar.cc/150?img=11',
+    age: 22,
+    distance: '10',
+  },
+  {
+    id: '3',
+    name: 'Lee Min Ho',
+    avatar: 'https://i.pravatar.cc/150?img=12',
+    age: 30,
+    distance: '8',
+  },
+  {
+    id: '4',
+    name: 'Sơn Tùng MTP',
+    avatar: 'https://i.pravatar.cc/150?img=13',
+    age: 28,
+    distance: '12',
+  },
+  {
+    id: '5',
+    name: 'Quang Đặng',
+    avatar: 'https://i.pravatar.cc/150?img=14',
+    age: 26,
+    distance: '3',
+  },
 ];
 
 const ListFriendScreen = () => {
@@ -51,19 +86,21 @@ const ListFriendScreen = () => {
           data={DATA}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
-            <FriendListItem name={item.name} avatar={item.avatar} />
+            <FriendListItem
+              name={item.name}
+              avatar={item.avatar}
+              age={item.age}
+              distance={item.distance}
+            />
           )}
-          ItemSeparatorComponent={() => null}
         />
       </View>
     </ScreenContainer>
   );
 };
 
-const FriendLabel: React.FC<{ active?: boolean; label: string }> = ({
-  active,
-  label,
-}) => {
+const FriendLabel = (props: FriendLabelProps) => {
+  const { active, label } = props;
   return (
     <View style={{ alignItems: 'center' }}>
       <CustomText

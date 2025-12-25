@@ -4,24 +4,20 @@ import AlbumPhotoItem from './AlbumPhotoItem';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-interface Photo {
+export type Photo = {
   id: number;
   image: any;
   isDefault: boolean;
-}
+};
 
-interface ProfileAlbumTabProps {
+export type ProfileAlbumTabProps = {
   photos: Photo[];
   onPickImage: (photoId: number) => void;
   onRemoveImage: (photoId: number) => void;
-}
+};
 
-const ProfileAlbumTab: React.FC<ProfileAlbumTabProps> = ({
-  photos,
-  onPickImage,
-  onRemoveImage,
-}) => {
-  // Chia photos thành các hàng, mỗi hàng tối đa 3 ảnh
+const ProfileAlbumTab = (props: ProfileAlbumTabProps) => {
+  const { photos, onPickImage, onRemoveImage } = props;
   const chunkPhotos = (photoList: Photo[], size: number = 3) => {
     const chunks = [];
     for (let i = 0; i < photoList.length; i += size) {
@@ -42,7 +38,6 @@ const ProfileAlbumTab: React.FC<ProfileAlbumTabProps> = ({
         />
       </View>
 
-      {/* Album Grid for this row */}
       <View style={styles.albumGrid}>
         {row.map(photo => (
           <AlbumPhotoItem

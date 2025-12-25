@@ -2,7 +2,7 @@ import CustomText from 'components/text/CustomText';
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
-type Props = {
+export type Props = {
   name: string;
   distance?: string;
   age?: number;
@@ -10,13 +10,9 @@ type Props = {
   onPress?: () => void;
 };
 
-const FriendListItem: React.FC<Props> = ({
-  name,
-  distance = '0.5km',
-  age = 23,
-  avatar,
-  onPress,
-}) => {
+const FriendListItem = (props: Props) => {
+  const { name, distance, age, avatar, onPress } = props;
+
   return (
     <TouchableOpacity
       style={styles.container}
@@ -37,7 +33,7 @@ const FriendListItem: React.FC<Props> = ({
           style={styles.meta}
           numberOfLines={1}
         >
-          {distance} · {age} tuổi
+          {distance}km · {age} tuổi
         </CustomText>
       </View>
     </TouchableOpacity>
@@ -66,8 +62,7 @@ const styles = StyleSheet.create({
   name: {},
   meta: {
     marginTop: 6,
-    color: '#9AA6B2',
-    fontSize: 13,
+    color: '#969696',
   },
 });
 

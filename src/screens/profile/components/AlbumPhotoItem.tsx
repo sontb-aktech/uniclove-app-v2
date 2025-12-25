@@ -3,13 +3,13 @@ import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import { IconFeather } from 'libs';
 import CustomText from 'components/text/CustomText';
 
-interface AlbumPhotoItemProps {
+export type AlbumPhotoItemProps = {
   id: number;
   image: any;
   isDefault: boolean;
   onPress: () => void;
   onRemove: () => void;
-}
+};
 
 const AlbumPhotoItem = (props: AlbumPhotoItemProps) => {
   const { id, image, isDefault, onPress, onRemove } = props;

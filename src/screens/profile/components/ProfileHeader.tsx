@@ -18,22 +18,19 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const COVER_HEIGHT = 260;
 const AVATAR_SIZE = 96;
 
-interface ProfileHeaderProps {
+export type ProfileHeaderProps = {
   coverImage: string | null;
   avatarUrl: string;
   onPickCoverImage: () => void;
   onRemoveCoverImage: () => void;
-}
+};
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({
-  coverImage,
-  avatarUrl,
-  onPickCoverImage,
-  onRemoveCoverImage,
-}) => {
-  const renderCoverImage = () => {
-    if (coverImage) {
-      return (
+const ProfileHeader = (props: ProfileHeaderProps) => {
+  const { coverImage, avatarUrl, onPickCoverImage, onRemoveCoverImage } = props;
+
+  return (
+    <View style={styles.headerContainer}>
+      {coverImage ? (
         <View style={styles.coverImageContainer}>
           <Image
             source={{ uri: coverImage }}
@@ -41,9 +38,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             resizeMode="cover"
           />
         </View>
-      );
-    } else {
-      return (
+      ) : (
         <View style={styles.coverContainer}>
           <View style={styles.blurImageWrapper}>
             <Image
@@ -64,13 +59,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             style={styles.gradientOverlay}
           />
         </View>
-      );
-    }
-  };
-
-  return (
-    <View style={styles.headerContainer}>
-      {renderCoverImage()}
+      )}
 
       <Pressable style={styles.changePhotoButton} onPress={onPickCoverImage}>
         <BlurView

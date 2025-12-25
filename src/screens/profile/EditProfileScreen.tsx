@@ -20,29 +20,49 @@ import { BlurView } from '@danielsaraldi/react-native-blur-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboardAnimation } from 'hooks/useKeyboardAnimation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import ModalCenter from 'components/modal/ModalCenter';
 import ImageIcon from 'components/image/ImageIcon';
 import NavigationService from 'NavigationService';
+import GradientButton from 'components/button/GradientButton';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
+const formatBirthDate = (date: Date) => {
+  const months = [
+    'Th1',
+    'Th2',
+    'Th3',
+    'Th4',
+    'Th5',
+    'Th6',
+    'Th7',
+    'Th8',
+    'Th9',
+    'Th10',
+    'Th11',
+    'Th12',
+  ];
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  return `${day} / ${month} / ${year}`;
+};
+
 const EditProfileScreen = () => {
   const insets = useSafeAreaInsets();
-
+  const isPickingAvatarRef = useRef(false);
   const [avatar, setAvatar] = useState(
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
   );
   const [fullName, setFullName] = useState('');
-  const [birthDate, setBirthDate] = useState(new Date(1990, 5, 1)); // Date object
+  const [birthDate, setBirthDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [gender, setGender] = useState<'male' | 'female' | 'other'>('male');
   const [bio, setBio] = useState('');
   const [hobbies, setHobbies] = useState('');
   const [showExitModal, setShowExitModal] = useState(false);
 
-  // Hàm chọn ảnh đại diện
-  const isPickingAvatarRef = useRef(false);
   const handlePickAvatar = async () => {
     if (isPickingAvatarRef.current) return;
     isPickingAvatarRef.current = true;
@@ -68,31 +88,8 @@ const EditProfileScreen = () => {
     }
   };
 
-  const formatBirthDate = (date: Date) => {
-    const months = [
-      'Th1',
-      'Th2',
-      'Th3',
-      'Th4',
-      'Th5',
-      'Th6',
-      'Th7',
-      'Th8',
-      'Th9',
-      'Th10',
-      'Th11',
-      'Th12',
-    ];
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    return `${day} / ${month} / ${year}`;
-  };
-
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
-    }
+  const handleDateChange = (selectedDate: Date) => {
+    setShowDatePicker(false);
     if (selectedDate) {
       setBirthDate(selectedDate);
     }
@@ -103,7 +100,6 @@ const EditProfileScreen = () => {
   };
 
   const handleSave = () => {
-    // TODO: Implement save functionality
     console.log('Saving profile...');
     NavigationService.back();
   };
@@ -126,10 +122,8 @@ const EditProfileScreen = () => {
           keyboardShouldPersistTaps="handled"
           bottomOffset={100}
         >
-          {/* Ảnh đại diện */}
           <View style={styles.section}>
             <CustomText style={styles.sectionTitle}>Ảnh đại diện</CustomText>
-
             <TouchableOpacity
               style={styles.avatarContainer}
               onPress={handlePickAvatar}
@@ -141,11 +135,14 @@ const EditProfileScreen = () => {
                 resizeMode="cover"
               />
 
-              {/* Blur overlay button ở dưới */}
               <View style={styles.avatarOverlay}>
                 <BlurView style={styles.avatarBlur} radius={40} targetId="" />
                 <View style={styles.avatarOverlayContent}>
-                  <IconFeather name="camera" size={16} color="#fff" />
+                  <ImageIcon
+                    source={require('assets/ic_camera.png')}
+                    size={16}
+                    tintColor="#fff"
+                  />
                   <CustomText style={styles.avatarOverlayText}>
                     Thay ảnh đại diện
                   </CustomText>
@@ -165,16 +162,10 @@ const EditProfileScreen = () => {
                 value={fullName}
                 onChangeText={setFullName}
               />
-              <IconFeather
-                name="user"
-                size={20}
-                color="#C7C7CD"
-                style={styles.inputIcon}
-              />
+              <ImageIcon source={require('assets/ic_user.png')} size={20} />
             </View>
           </View>
 
-          {/* Ngày sinh của bạn */}
           <View style={styles.section}>
             <CustomText style={styles.label}>Ngày sinh của bạn</CustomText>
             <TouchableOpacity
@@ -184,59 +175,13 @@ const EditProfileScreen = () => {
               <CustomText style={styles.inputText}>
                 {formatBirthDate(birthDate)}
               </CustomText>
-              <IconFeather
-                name="calendar"
+              <ImageIcon
+                source={require('assets/ic_calendars.png')}
                 size={20}
-                color="#C7C7CD"
-                style={styles.inputIcon}
               />
             </TouchableOpacity>
-
-            {/* DatePicker Modal for iOS */}
-            {Platform.OS === 'ios' && showDatePicker && (
-              <Modal
-                transparent
-                animationType="slide"
-                visible={showDatePicker}
-                onRequestClose={closeDatePicker}
-              >
-                <View style={styles.modalOverlay}>
-                  <View style={styles.datePickerContainer}>
-                    <View style={styles.datePickerHeader}>
-                      <TouchableOpacity onPress={closeDatePicker}>
-                        <CustomText style={styles.datePickerButton}>
-                          Xong
-                        </CustomText>
-                      </TouchableOpacity>
-                    </View>
-                    <DateTimePicker
-                      value={birthDate}
-                      mode="date"
-                      display="spinner"
-                      onChange={handleDateChange}
-                      maximumDate={new Date()}
-                      minimumDate={new Date(1900, 0, 1)}
-                      textColor="#000"
-                    />
-                  </View>
-                </View>
-              </Modal>
-            )}
-
-            {/* DatePicker for Android */}
-            {Platform.OS === 'android' && showDatePicker && (
-              <DateTimePicker
-                value={birthDate}
-                mode="date"
-                display="default"
-                onChange={handleDateChange}
-                maximumDate={new Date()}
-                minimumDate={new Date(1900, 0, 1)}
-              />
-            )}
           </View>
 
-          {/* Giới tính */}
           <View style={styles.section}>
             <CustomText style={styles.label}>Giới tính</CustomText>
             <View style={styles.genderContainer}>
@@ -316,7 +261,6 @@ const EditProfileScreen = () => {
             </View>
           </View>
 
-          {/* Giới thiệu bản thân */}
           <View style={styles.section}>
             <CustomText style={styles.label}>Giới thiệu bản thân</CustomText>
             <TextInput
@@ -344,41 +288,16 @@ const EditProfileScreen = () => {
         </View> */}
         </KeyboardAwareScrollView>
 
-        {/* Button Lưu thay đổi - Neo bottom với gradient background */}
-        <View>
-          <LinearGradient
-            colors={['rgba(255, 255, 255, 0)', '#FFFFFF']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={[
-              styles.saveButtonContainer,
-              { paddingBottom: insets.bottom },
-            ]}
-          >
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleSave}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#67A4FF', '#0786FF']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={styles.saveButtonGradient}
-              >
-                <CustomText style={styles.saveButtonText}>
-                  Lưu thay đổi
-                </CustomText>
-              </LinearGradient>
-            </TouchableOpacity>
-          </LinearGradient>
-        </View>
+        <GradientButton
+          text="Lưu thay đổi"
+          onPress={handleSave}
+          style={[styles.saveButtonContainer, { marginBottom: insets.bottom }]}
+        />
       </View>
 
       <ModalCenter
         isVisible={showExitModal}
         onCancel={() => setShowExitModal(false)}
-        disableClickOutside={false}
       >
         <View style={styles.modalContent}>
           <CustomText style={styles.modalTitle}>
@@ -396,32 +315,38 @@ const EditProfileScreen = () => {
             style={styles.modalIcon}
           />
 
-          {/* Save Button */}
-          <TouchableOpacity
-            style={styles.modalSaveButton}
+          <GradientButton
+            text="Lưu lại"
             onPress={handleSave}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={['#67A4FF', '#0786FF']}
-              style={styles.modalSaveButtonGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            >
-              <CustomText style={styles.modalSaveButtonText}>
-                Lưu lại
-              </CustomText>
-            </LinearGradient>
-          </TouchableOpacity>
+            style={styles.modalSaveButton}
+          />
 
-          {/* Discard Button */}
-          <TouchableOpacity onPress={handleDiscardChanges} activeOpacity={0.7}>
+          <TouchableOpacity
+            onPress={handleDiscardChanges}
+            style={styles.modalDiscardButton}
+            activeOpacity={0.7}
+          >
             <CustomText style={styles.modalDiscardText}>
               Thoát mà không lưu
             </CustomText>
           </TouchableOpacity>
         </View>
       </ModalCenter>
+
+      {/* DateTimePicker Modal */}
+      <DateTimePickerModal
+        isVisible={showDatePicker}
+        mode="date"
+        date={birthDate}
+        onConfirm={handleDateChange}
+        onCancel={closeDatePicker}
+        maximumDate={new Date()}
+        minimumDate={new Date(1900, 0, 1)}
+        locale="vi_VN"
+        confirmTextIOS="Xác nhận"
+        cancelTextIOS="Hủy"
+        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+      />
     </ScreenContainer>
   );
 };
@@ -487,7 +412,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255, 255, 255, 0)',
   },
   avatarOverlayContent: {
     flexDirection: 'row',
@@ -568,32 +493,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  // DatePicker Modal styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  datePickerContainer: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingBottom: 20,
-  },
-  datePickerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F5F5F5',
-  },
-  datePickerButton: {
-    color: '#0786FF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-
   // Save button
   saveButtonContainer: {
     marginHorizontal: 20,
@@ -663,5 +562,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0786FF',
     fontWeight: '600',
+  },
+  modalDiscardButton: {
+    paddingVertical: 14,
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: '#F5FAFF',
+    borderRadius: 16,
   },
 });
