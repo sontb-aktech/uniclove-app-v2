@@ -1,31 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Dimensions,
-  FlatList,
   Image,
   ImageSourcePropType,
-  ListRenderItemInfo,
   StyleSheet,
   View,
 } from 'react-native';
-import ModalCenter from 'components/modal/ModalCenter';
-import ImageIcon from 'components/image/ImageIcon';
-import CustomText from 'components/text/CustomText';
+import AwesomeGallery from 'react-native-awesome-gallery';
 import ModalImage from 'components/modal/ModalImage';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+// Cấu hình Card Profile
+const CARD_MARGIN = 32;
+const IMAGE_WIDTH = SCREEN_WIDTH - CARD_MARGIN;
+const IMAGE_ASPECT_RATIO = 3 / 4;
+const IMAGE_HEIGHT = IMAGE_WIDTH / IMAGE_ASPECT_RATIO;
 
 type ImageItem = {
   id?: number | string;
   image: ImageSourcePropType | { uri: string } | string;
 };
 
-const ITEM_WIDTH = SCREEN_WIDTH;
-
-const resolveSource = (input: ImageItem['image']) => {
-  if (!input) return undefined;
-  if (typeof input === 'string') return { uri: input };
-  return input as ImageSourcePropType;
+type GalleryItem = {
+  source: ImageSourcePropType;
+  key: string | number;
 };
 
 const ModalShowImage = (props: {
@@ -35,35 +34,50 @@ const ModalShowImage = (props: {
   initialIndex?: number;
 }) => {
   const { isVisible, onCancel, images = [], initialIndex = 0 } = props;
-  const [index, setIndex] = useState(Math.max(0, initialIndex));
-  const listRef = useRef<FlatList<ImageItem> | null>(null);
+  const [index, setIndex] = useState(initialIndex);
+  const galleryRef = useRef<any>(null);
 
   useEffect(() => {
-    setIndex(Math.max(0, initialIndex));
-  }, [initialIndex, isVisible]);
-
-  useEffect(() => {
-    if (isVisible && listRef.current) {
-      setTimeout(() => {
-        try {
-          listRef.current?.scrollToIndex({
-            index: Math.max(0, initialIndex),
-            animated: false,
-          });
-        } catch (e) {}
-      }, 60);
+    if (isVisible) {
+      setIndex(Math.max(0, initialIndex));
     }
   }, [isVisible, initialIndex]);
 
-  const onMomentumScrollEnd = (e: any) => {
-    const ix = Math.round(e.nativeEvent.contentOffset.x / ITEM_WIDTH);
-    setIndex(ix);
-  };
+  useEffect(() => {
+    if (isVisible && galleryRef.current) {
+      setTimeout(() => {
+        galleryRef.current?.setIndex(Math.max(0, initialIndex));
+      }, 50);
+    }
+  }, [isVisible, initialIndex]);
 
-  const renderItem = ({ item }: ListRenderItemInfo<ImageItem>) => {
+  const galleryData: GalleryItem[] = images.map((img, i) => {
+    let source: ImageSourcePropType;
+    if (typeof img.image === 'string') {
+      source = { uri: img.image };
+    } else if ((img.image as any)?.uri) {
+      source = { uri: (img.image as any).uri };
+    } else {
+      source = img.image as ImageSourcePropType;
+    }
+    return { source, key: img.id || i };
+  });
+
+  const renderItem = ({
+    item,
+    index: itemIndex,
+  }: {
+    item: GalleryItem;
+    index: number;
+    setImageDimensions: any;
+  }) => {
     return (
-      <View style={styles.itemWrap}>
-        <Image source={item.image} style={styles.image} resizeMode="cover" />
+      <View style={styles.itemContainer}>
+        {/* Card Profile: Giữ nguyên logic ảnh bo góc + dot bên trong */}
+        <View style={styles.imageCard}>
+          <Image source={item.source} style={styles.image} resizeMode="cover" />
+          <View style={styles.gradientOverlay} />
+        </View>
       </View>
     );
   };
@@ -72,36 +86,28 @@ const ModalShowImage = (props: {
     <ModalImage
       isVisible={isVisible}
       onCancel={onCancel}
-      contentContainerStyle={styles.container}
+      // QUAN TRỌNG: Dòng này giúp giữ Animation/Blur nhưng sửa lỗi layout
+      contentContainerStyle={{ flex: 1, width: '100%', height: '100%' }}
     >
-      <View style={styles.inner}>
-        <FlatList
-          ref={r => {
-            listRef.current = r;
-          }}
-          data={images}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item, i) =>
-            item.id != null ? String(item.id) : String(i)
-          }
+      <View style={styles.galleryWrapper}>
+        <AwesomeGallery
+          ref={galleryRef}
+          data={galleryData}
+          keyExtractor={(item: GalleryItem) => String(item.key)}
           renderItem={renderItem}
-          onMomentumScrollEnd={onMomentumScrollEnd}
-          initialNumToRender={3}
-          getItemLayout={(_, idx) => ({
-            length: ITEM_WIDTH,
-            offset: ITEM_WIDTH * idx,
-            index: idx,
-          })}
-          initialScrollIndex={Math.max(0, initialIndex)}
+          initialIndex={initialIndex}
+          onIndexChange={setIndex}
+          onSwipeToClose={onCancel}
+          style={{ flex: 1 }}
         />
-
-        <View style={styles.dotsRow} pointerEvents="none">
+        <View style={styles.dotsContainer}>
           {images.map((_, i) => (
             <View
               key={i}
-              style={[styles.dot, i === index ? styles.dotActive : undefined]}
+              style={[
+                styles.dot,
+                index === i ? styles.activeDot : styles.inactiveDot,
+              ]}
             />
           ))}
         </View>
@@ -113,35 +119,44 @@ const ModalShowImage = (props: {
 export default ModalShowImage;
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-  },
-  inner: {
+  galleryWrapper: {
+    flex: 1,
     width: '100%',
+  },
+  itemContainer: {
+    width: SCREEN_WIDTH,
+    height: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  itemWrap: {
-    width: ITEM_WIDTH,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
+  imageCard: {
+    width: IMAGE_WIDTH,
+    height: IMAGE_HEIGHT,
+    borderRadius: 24,
+    overflow: 'hidden',
+    backgroundColor: '#222',
+    position: 'relative',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
   },
   image: {
-    width: SCREEN_WIDTH - 16,
-    aspectRatio: 1 / 1.5,
-    borderRadius: 48,
+    width: '100%',
+    height: '100%',
   },
-  pagerRow: {
+  gradientOverlay: {
     position: 'absolute',
-    top: 10,
-    left: 20,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    backgroundColor: 'rgba(0,0,0,0.15)',
   },
-  pagerText: {
-    color: '#fff',
-  },
-  dotsRow: {
+  dotsContainer: {
     position: 'absolute',
-    bottom: 58,
+    bottom: 20,
     left: 0,
     right: 0,
     flexDirection: 'row',
@@ -150,13 +165,15 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   dot: {
-    width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(255,255,255,0.5)',
   },
-  dotActive: {
-    backgroundColor: '#fff',
-    borderRadius: 3,
+  activeDot: {
+    width: 24,
+    backgroundColor: '#FFFFFF',
+  },
+  inactiveDot: {
+    width: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
 });

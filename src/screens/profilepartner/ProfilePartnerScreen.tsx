@@ -22,6 +22,7 @@ import NavigationService from 'NavigationService';
 import ProfileInfo from './components/ProfileInfo';
 import ModalCenter from 'components/modal/ModalCenter';
 import ModalShowImage from './components/ModalShowImage';
+import ModalReport from './components/ModalReport';
 const TAB_PADDING = 20;
 const TAB_GAP = 12;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -45,6 +46,39 @@ const DEFAULT_ALBUM_PHOTOS = [
   { id: 3, image: require('assets/img_default_profile.png'), isDefault: true },
   { id: 4, image: require('assets/img_default_profile.png'), isDefault: true },
   { id: 5, image: require('assets/img_default_profile.png'), isDefault: true },
+];
+
+const SAMPLE_IMAGES = [
+  {
+    id: 1,
+    image:
+      'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80', // Ảnh chân dung nữ
+  },
+  {
+    id: 2,
+    image:
+      'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=800&q=80', // Ảnh nghệ thuật
+  },
+  {
+    id: 3,
+    image:
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80', // Ảnh mẫu thời trang
+  },
+  {
+    id: 4,
+    image:
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80', // Ảnh chân dung nam
+  },
+  {
+    id: 5,
+    image:
+      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&q=80', // Ảnh mẫu nữ ngồi
+  },
+  {
+    id: 6,
+    image:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80', // Ảnh cận mặt
+  },
 ];
 
 const user = {
@@ -125,6 +159,19 @@ const ProfilePartnerScreen = () => {
   const [viewerVisible, setViewerVisible] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
   const scrollRef = useRef<ScrollView | null>(null);
+  const [showReportModal, setShowReportModal] = useState(false);
+
+  const handleReport = () => {
+    setShowReportModal(false);
+  };
+
+  const handleBlock = () => {
+    setShowReportModal(false);
+  };
+
+  const handleCancelReport = () => {
+    setShowReportModal(false);
+  };
 
   const handlePickAlbumImage = async (photoId: number) => {
     const idx = albumPhotos.findIndex(p => p.id === photoId);
@@ -179,7 +226,9 @@ const ProfilePartnerScreen = () => {
       listButtonRight={[
         {
           source: require('assets/ic_alert_circle.png'),
-          onPress: () => console.log('Go to settings'),
+          onPress: () => {
+            setShowReportModal(true);
+          },
         },
       ]}
     >
@@ -220,8 +269,14 @@ const ProfilePartnerScreen = () => {
       <ModalShowImage
         isVisible={viewerVisible}
         onCancel={() => setViewerVisible(false)}
-        images={albumPhotos}
+        images={SAMPLE_IMAGES}
         initialIndex={viewerIndex}
+      />
+      <ModalReport
+        isVisible={showReportModal}
+        onCancel={() => setShowReportModal(false)}
+        onReport={handleReport}
+        onBlock={handleBlock}
       />
     </ScreenContainer>
   );
