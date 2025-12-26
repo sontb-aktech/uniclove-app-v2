@@ -22,6 +22,7 @@ import {
   ProfileScreen,
   EditProfileScreen,
   ListFriendScreen,
+  ProfilePartnerScreen,
 } from 'screens';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -72,6 +73,10 @@ const Nav = () => {
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
       <Stack.Screen name="ListFriendScreen" component={ListFriendScreen} />
+      <Stack.Screen
+        name="ProfilePartnerScreen"
+        component={ProfilePartnerScreen}
+      />
     </Stack.Navigator>
   );
 };

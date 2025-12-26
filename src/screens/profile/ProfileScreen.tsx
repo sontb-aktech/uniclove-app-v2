@@ -23,7 +23,7 @@ const TAB_GAP = 12;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TAB_WIDTH = (SCREEN_WIDTH - TAB_PADDING * 2 - TAB_GAP) / 2;
 
-const DEFAULT_ALBUM_PHOTOS = [
+export const DEFAULT_ALBUM_PHOTOS = [
   { id: 1, image: require('assets/img_default_profile.png'), isDefault: true },
   { id: 2, image: require('assets/img_default_profile.png'), isDefault: true },
   { id: 3, image: require('assets/img_default_profile.png'), isDefault: true },

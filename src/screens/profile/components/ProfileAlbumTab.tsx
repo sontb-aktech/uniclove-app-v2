@@ -13,11 +13,12 @@ export type Photo = {
 export type ProfileAlbumTabProps = {
   photos: Photo[];
   onPickImage: (photoId: number) => void;
-  onRemoveImage: (photoId: number) => void;
+  onRemoveImage?: (photoId: number) => void;
+  isPartner?: boolean;
 };
 
 const ProfileAlbumTab = (props: ProfileAlbumTabProps) => {
-  const { photos, onPickImage, onRemoveImage } = props;
+  const { photos, onPickImage, onRemoveImage, isPartner } = props;
   const chunkPhotos = (photoList: Photo[], size: number = 3) => {
     const chunks = [];
     for (let i = 0; i < photoList.length; i += size) {
@@ -39,14 +40,15 @@ const ProfileAlbumTab = (props: ProfileAlbumTabProps) => {
       </View>
 
       <View style={styles.albumGrid}>
-        {row.map(photo => (
+        {row.map((photo, index) => (
           <AlbumPhotoItem
             key={photo.id}
             id={photo.id}
             image={photo.image}
             isDefault={photo.isDefault}
+            isPartner={isPartner}
             onPress={() => onPickImage(photo.id)}
-            onRemove={() => onRemoveImage(photo.id)}
+            onRemove={() => onRemoveImage && onRemoveImage(photo.id)}
           />
         ))}
       </View>

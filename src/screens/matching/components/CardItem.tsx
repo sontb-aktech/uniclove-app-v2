@@ -2,6 +2,8 @@ import { BlurView } from '@danielsaraldi/react-native-blur-view';
 import ImageIcon from 'components/image/ImageIcon';
 import CustomText from 'components/text/CustomText';
 import useTheme from 'hooks/useTheme';
+import Nav from 'Nav';
+import NavigationService from 'NavigationService';
 import React from 'react';
 import {
   Dimensions,
@@ -45,12 +47,16 @@ const CardItem = (props: {
       entering={FadeInDown.duration(300)}
       style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
     >
-      <View
+      <TouchableOpacity
+        activeOpacity={1}
         style={{
           width: cardWidth,
           aspectRatio: 374 / 594,
           borderRadius: 48,
           overflow: 'hidden',
+        }}
+        onPress={() => {
+          NavigationService.navigate('ProfilePartnerScreen');
         }}
       >
         <Image
@@ -148,7 +154,7 @@ const CardItem = (props: {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </Animated.View>
   );
 };

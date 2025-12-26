@@ -24,6 +24,8 @@ export { default as NearbyScreen } from './nearby/NearbyScreen';
 export { default as ProfileScreen } from './profile/ProfileScreen';
 export { default as EditProfileScreen } from './profile/EditProfileScreen';
 export { default as ListFriendScreen } from './profile/ListFriendScreen';
+export { default as ProfilePartnerScreen } from './profilepartner/ProfilePartnerScreen';
+
 export type RootStackParamList = {
   ToolsScreen: undefined;
   HomeScreen: undefined;
@@ -51,5 +53,8 @@ export type RootStackParamList = {
   EditProfileScreen: undefined;
   ListFriendScreen: {
     activeTabIndex?: number;
+  };
+  ProfilePartnerScreen: {
+    partner?: any;
   };
 };

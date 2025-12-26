@@ -9,10 +9,11 @@ export type AlbumPhotoItemProps = {
   isDefault: boolean;
   onPress: () => void;
   onRemove: () => void;
+  isPartner?: boolean;
 };
 
 const AlbumPhotoItem = (props: AlbumPhotoItemProps) => {
-  const { id, image, isDefault, onPress, onRemove } = props;
+  const { id, image, isDefault, onPress, onRemove, isPartner } = props;
   return (
     <View key={id} style={styles.photoContainer}>
       <Image
@@ -30,14 +31,14 @@ const AlbumPhotoItem = (props: AlbumPhotoItemProps) => {
           />
         </TouchableOpacity>
 
-        {!isDefault && (
+        {!isDefault && !isPartner && (
           <TouchableOpacity style={styles.removeButton} onPress={onRemove}>
             <IconFeather name="x" size={14} color="#fff" />
           </TouchableOpacity>
         )}
       </View>
 
-      {!isDefault && (
+      {!isDefault && !isPartner && (
         <View style={styles.changeLabel}>
           <CustomText style={styles.changeLabelText}>Thay ảnh</CustomText>
         </View>

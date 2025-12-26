@@ -21,12 +21,10 @@ const AVATAR_SIZE = 96;
 export type ProfileHeaderProps = {
   coverImage: string | null;
   avatarUrl: string;
-  onPickCoverImage: () => void;
-  onRemoveCoverImage: () => void;
 };
 
 export const ProfileHeader = (props: ProfileHeaderProps) => {
-  const { coverImage, avatarUrl, onPickCoverImage, onRemoveCoverImage } = props;
+  const { coverImage, avatarUrl } = props;
 
   return (
     <View style={styles.headerContainer}>
@@ -60,21 +58,6 @@ export const ProfileHeader = (props: ProfileHeaderProps) => {
           />
         </View>
       )}
-
-      <Pressable style={styles.changePhotoButton} onPress={onPickCoverImage}>
-        <BlurView
-          style={styles.changePhotoBlur}
-          radius={35}
-          targetId=""
-          type="ultra-thin-material-dark"
-        />
-        <ImageIcon
-          source={require('assets/ic_camera.png')}
-          size={16}
-          tintColor="#fff"
-        />
-        <CustomText style={styles.changePhotoText}>Thay ảnh bìa</CustomText>
-      </Pressable>
 
       <View style={styles.avatarContainer}>
         <Avatar
