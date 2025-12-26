@@ -20,15 +20,14 @@ import { IconMaterial } from 'libs';
 
 const DURATION = 200;
 
-// --- GIỮ NGUYÊN ANIMATION ---
 const FadeZoomIn = new Keyframe({
-  0: { opacity: 0, transform: [{ scale: 0.2 }] },
+  0: { opacity: 0, transform: [{ scale: 0.1 }] },
   100: { opacity: 1, transform: [{ scale: 1 }] },
 }).duration(DURATION);
 
 const FadeZoomOut = new Keyframe({
   0: { opacity: 1, transform: [{ scale: 1 }] },
-  100: { opacity: 0, transform: [{ scale: 0.2 }] },
+  100: { opacity: 0, transform: [{ scale: 0.1 }] },
 }).duration(DURATION);
 
 const ModalImage = (props: {
@@ -38,7 +37,6 @@ const ModalImage = (props: {
   maxHeight?: DimensionValue;
   background?: any;
   disableClickOutside?: boolean;
-  contentContainerStyle?: ViewStyle; // Prop này sẽ giúp ép full màn hình
 }) => {
   const { children, onCancel, isVisible } = props;
   const insets = useSafeAreaInsets();
@@ -65,7 +63,6 @@ const ModalImage = (props: {
           style={styles.fullScreen}
           enabled
         >
-          {/* --- GIỮ NGUYÊN BACKGROUND BLUR --- */}
           <Animated.View
             style={[styles.backdrop]}
             entering={FadeIn.duration(200)}
@@ -85,23 +82,16 @@ const ModalImage = (props: {
               </View>
             </TouchableWithoutFeedback>
           </Animated.View>
-
-          {/* --- GIỮ NGUYÊN ANIMATION ZOOM --- */}
           <Animated.View
             entering={FadeZoomIn}
             exiting={FadeZoomOut}
-            style={[
-              {
-                alignSelf: 'stretch',
-                maxHeight: props.maxHeight,
-              },
-              // THÊM DÒNG NÀY: Để bên ngoài có thể ép flex: 1 (Full màn hình)
-              props.contentContainerStyle,
-            ]}
+            style={{
+              alignSelf: 'stretch',
+              maxHeight: props.maxHeight,
+            }}
           >
             {children}
           </Animated.View>
-
           <Pressable
             style={{
               position: 'absolute',
@@ -129,8 +119,6 @@ export default ModalImage;
 const styles = StyleSheet.create({
   fullScreen: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   backdrop: {
     position: 'absolute',

@@ -8,110 +8,54 @@ import {
 } from 'react-native';
 import AwesomeGallery from 'react-native-awesome-gallery';
 import ModalImage from 'components/modal/ModalImage';
+import ModalCenter from 'components/modal/ModalCenter';
+import ModalPopup from 'components/modal/ModalPopup';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Cấu hình Card Profile
 const CARD_MARGIN = 32;
 const IMAGE_WIDTH = SCREEN_WIDTH - CARD_MARGIN;
 const IMAGE_ASPECT_RATIO = 3 / 4;
 const IMAGE_HEIGHT = IMAGE_WIDTH / IMAGE_ASPECT_RATIO;
 
-type ImageItem = {
-  id?: number | string;
-  image: ImageSourcePropType | { uri: string } | string;
-};
-
-type GalleryItem = {
-  source: ImageSourcePropType;
-  key: string | number;
-};
-
 const ModalShowImage = (props: {
   isVisible: boolean;
   onCancel: () => void;
-  images: ImageItem[];
+  images: string[];
   initialIndex?: number;
 }) => {
   const { isVisible, onCancel, images = [], initialIndex = 0 } = props;
   const [index, setIndex] = useState(initialIndex);
   const galleryRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (isVisible) {
-      setIndex(Math.max(0, initialIndex));
-    }
-  }, [isVisible, initialIndex]);
-
-  useEffect(() => {
-    if (isVisible && galleryRef.current) {
-      setTimeout(() => {
-        galleryRef.current?.setIndex(Math.max(0, initialIndex));
-      }, 50);
-    }
-  }, [isVisible, initialIndex]);
-
-  const galleryData: GalleryItem[] = images.map((img, i) => {
-    let source: ImageSourcePropType;
-    if (typeof img.image === 'string') {
-      source = { uri: img.image };
-    } else if ((img.image as any)?.uri) {
-      source = { uri: (img.image as any).uri };
-    } else {
-      source = img.image as ImageSourcePropType;
-    }
-    return { source, key: img.id || i };
-  });
-
-  const renderItem = ({
-    item,
-    index: itemIndex,
-  }: {
-    item: GalleryItem;
-    index: number;
-    setImageDimensions: any;
-  }) => {
+  const renderItem = ({ item, index: itemIndex, setImageDimensions }: any) => {
     return (
       <View style={styles.itemContainer}>
-        {/* Card Profile: Giữ nguyên logic ảnh bo góc + dot bên trong */}
         <View style={styles.imageCard}>
-          <Image source={item.source} style={styles.image} resizeMode="cover" />
-          <View style={styles.gradientOverlay} />
+          <Image
+            source={{ uri: item }}
+            style={styles.image}
+            resizeMode="cover"
+            onLoad={e => {
+              const { width, height } = e.nativeEvent.source;
+              setImageDimensions({ width, height });
+            }}
+          />
         </View>
       </View>
     );
   };
 
   return (
-    <ModalImage
-      isVisible={isVisible}
-      onCancel={onCancel}
-      // QUAN TRỌNG: Dòng này giúp giữ Animation/Blur nhưng sửa lỗi layout
-      contentContainerStyle={{ flex: 1, width: '100%', height: '100%' }}
-    >
-      <View style={styles.galleryWrapper}>
-        <AwesomeGallery
-          ref={galleryRef}
-          data={galleryData}
-          keyExtractor={(item: GalleryItem) => String(item.key)}
-          renderItem={renderItem}
-          initialIndex={initialIndex}
-          onIndexChange={setIndex}
-          onSwipeToClose={onCancel}
-          style={{ flex: 1 }}
-        />
-        <View style={styles.dotsContainer}>
-          {images.map((_, i) => (
-            <View
-              key={i}
-              style={[
-                styles.dot,
-                index === i ? styles.activeDot : styles.inactiveDot,
-              ]}
-            />
-          ))}
-        </View>
-      </View>
+    <ModalImage isVisible={isVisible} onCancel={onCancel}>
+      <AwesomeGallery
+        ref={galleryRef}
+        data={images}
+        renderItem={renderItem}
+        initialIndex={initialIndex}
+        onIndexChange={setIndex}
+        onSwipeToClose={onCancel}
+        style={{ flex: 1 }}
+      />
     </ModalImage>
   );
 };
@@ -121,7 +65,9 @@ export default ModalShowImage;
 const styles = StyleSheet.create({
   galleryWrapper: {
     flex: 1,
-    width: '100%',
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   itemContainer: {
     width: SCREEN_WIDTH,
@@ -156,21 +102,23 @@ const styles = StyleSheet.create({
   },
   dotsContainer: {
     position: 'absolute',
-    bottom: 20,
     left: 0,
     right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 6,
+    zIndex: 50,
+    elevation: 50,
   },
   dot: {
     height: 6,
     borderRadius: 3,
+    marginHorizontal: 4,
   },
   activeDot: {
-    width: 24,
+    width: 14,
     backgroundColor: '#FFFFFF',
+    borderRadius: 3,
   },
   inactiveDot: {
     width: 6,

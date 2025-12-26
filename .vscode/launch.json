@@ -5,27 +5,25 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "expo",
+      "name": "Attach to Hermes - Ios",
       "request": "attach",
-      "name": "Debug Expo app",
-      "projectRoot": "${workspaceFolder}",
-      "bundlerPort": "8081",
-      "bundlerHost": "127.0.0.1"
+      "type": "reactnativedirect",
+      "cwd": "${workspaceFolder}"
     },
+
     {
-      "name": "Attach to Direct iOS - Experimental",
+      "name": "Attach to Hermes - Android",
       "request": "attach",
       "type": "reactnativedirect",
       "cwd": "${workspaceFolder}",
-      "platform": "ios",
-      "useHermesEngine": true
+      "preLaunchTask": "npm: adb-reverse"
     },
     {
-      "name": "Attach to Hermes",
-      "type": "chrome",
-      "request": "attach",
-      "port": 8081,
-      "webRoot": "${workspaceFolder}"
+      "name": "Debug Android",
+      "cwd": "${workspaceFolder}",
+      "type": "reactnative",
+      "request": "launch",
+      "platform": "android"
     }
   ]
 }

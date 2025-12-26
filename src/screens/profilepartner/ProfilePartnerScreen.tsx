@@ -82,8 +82,8 @@ const SAMPLE_IMAGES = [
 ];
 
 const user = {
-  name: 'Nguyễn Thị Linh',
-  age: 23,
+  name: 'Nguyễn Thị Hà Quyên',
+  age: 26,
   avatar:
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
   matches: 144,
@@ -160,6 +160,7 @@ const ProfilePartnerScreen = () => {
   const [viewerIndex, setViewerIndex] = useState(0);
   const scrollRef = useRef<ScrollView | null>(null);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const handleReport = () => {
     setShowReportModal(false);
@@ -176,8 +177,8 @@ const ProfilePartnerScreen = () => {
   const handlePickAlbumImage = async (photoId: number) => {
     const idx = albumPhotos.findIndex(p => p.id === photoId);
     const indexToOpen = idx >= 0 ? idx : 0;
-    setViewerIndex(indexToOpen);
     setViewerVisible(true);
+    setViewerIndex(indexToOpen);
   };
 
   const renderTabBar = (props: any) => {
@@ -209,6 +210,8 @@ const ProfilePartnerScreen = () => {
         <ProfileInfo
           userName={user.name}
           isMatching={false}
+          isSending={isSending}
+          setIsSending={setIsSending}
           matches={user.matches}
           liking={user.liking}
           liked={user.liked}
@@ -222,7 +225,7 @@ const ProfilePartnerScreen = () => {
 
   return (
     <ScreenContainer
-      title="Nguyễn Thị Linh"
+      title="Nguyễn Thị Hà Quyên"
       listButtonRight={[
         {
           source: require('assets/ic_alert_circle.png'),
@@ -269,7 +272,7 @@ const ProfilePartnerScreen = () => {
       <ModalShowImage
         isVisible={viewerVisible}
         onCancel={() => setViewerVisible(false)}
-        images={SAMPLE_IMAGES}
+        images={SAMPLE_IMAGES?.map(img => img.image)}
         initialIndex={viewerIndex}
       />
       <ModalReport
