@@ -31,6 +31,8 @@ import DatePicker from 'components/picker/DatePicker';
 import moment from 'moment';
 import CustomInput from 'components/text/CustomInput';
 import { LIST_GENDER, LIST_PROVINCE } from 'screens/auth/CompleteProfileScreen';
+import GroupSelector from 'components/selected/GroupSelector';
+import { LIST_HOBBIES } from 'screens/survey/SurveyStep3Screen';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -66,7 +68,7 @@ const EditProfileScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
   const [selectedGender, setSelectedGender] = useState<number>();
-  const [selectedProvinceIndex, setSelectedProvinceIndex] = useState<number>();
+  const [listSelected, setListSelected] = useState<number[]>([]);
 
   const handlePickAvatar = async () => {
     if (isPickingAvatarRef.current) return;
@@ -187,6 +189,25 @@ const EditProfileScreen = () => {
                 label="Giới thiệu bản thân"
                 multiline
               />
+              <CustomText
+                fontStyleType="title-semibold"
+                style={{ marginTop: 16 }}
+              >
+                Sở thích
+              </CustomText>
+              <GroupSelector
+                style={{ marginTop: 16 }}
+                listItems={LIST_HOBBIES}
+                listSelected={listSelected}
+                onPressItem={index => {
+                  const current = listSelected ?? [];
+                  if (current.includes(index)) {
+                    setListSelected(current.filter(item => item !== index));
+                  } else {
+                    setListSelected([...current, index]);
+                  }
+                }}
+              />
             </View>
           </View>
         </KeyboardAwareScrollView>
@@ -194,7 +215,9 @@ const EditProfileScreen = () => {
         <GradientButton
           text="Lưu thay đổi"
           onPress={handleSave}
-          style={[styles.saveButtonContainer, { marginBottom: insets.bottom }]}
+          style={
+            [styles.saveButtonContainer, { marginBottom: insets.bottom }] as any
+          }
         />
       </View>
 

@@ -4146,6 +4146,7 @@ __metadata:
     react-native-awesome-gallery: ^0.4.3
     react-native-bars: ^2.4.3
     react-native-blob-util: ^0.24.5
+    react-native-collapsible-tab-view: ^8.0.1
     react-native-config: 1.5.6
     react-native-controlled-mentions: ^3.1.0
     react-native-device-info: ^15.0.1
@@ -5508,7 +5509,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dequal@npm:^2.0.2":
+"dequal@npm:2.0.3, dequal@npm:^2.0.2":
   version: 2.0.3
   resolution: "dequal@npm:2.0.3"
   checksum: 8679b850e1a3d0ebbc46ee780d5df7b478c23f335887464023a631d1b9af051ad4a6595a44220f9ff8ff95a8ddccf019b5ad778a976fd7bbf77383d36f412f90
@@ -9818,6 +9819,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-collapsible-tab-view@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "react-native-collapsible-tab-view@npm:8.0.1"
+  dependencies:
+    use-deep-compare: ^1.1.0
+  peerDependencies:
+    "@shopify/flash-list": ">=1.0.0"
+    react: "*"
+    react-native: "*"
+    react-native-pager-view: "*"
+    react-native-reanimated: ">=3.8.1"
+  peerDependenciesMeta:
+    "@shopify/flash-list":
+      optional: true
+  checksum: eb5a30f18386874b63ac6b6a120058187a8458a2710baa4bb4831644def126b99ab888a02613c292b995f3b89b1eebc617cc1bf5fa99444a3aa1de31897483f5
+  languageName: node
+  linkType: hard
+
 "react-native-config@npm:1.5.6":
   version: 1.5.6
   resolution: "react-native-config@npm:1.5.6"
@@ -11756,6 +11775,17 @@ __metadata:
   peerDependencies:
     react: ">=16.13"
   checksum: 2b9b6291df3f772f44d259b352e5d998963ccee0db2efeb76bb05525d928064aeeb69bb0dee5a5e428fea7cf3db67c097a770ebd30caa080662b565f6ef02b2e
+  languageName: node
+  linkType: hard
+
+"use-deep-compare@npm:^1.1.0":
+  version: 1.3.0
+  resolution: "use-deep-compare@npm:1.3.0"
+  dependencies:
+    dequal: 2.0.3
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: fada69c4562a92e1e81e406c40023a8adef2d020a84802ca05b9d9a476ee174087828e3f1224bfaac5059e6ef024c66a492260111a21f22f16581dc3cbfceb52
   languageName: node
   linkType: hard
 

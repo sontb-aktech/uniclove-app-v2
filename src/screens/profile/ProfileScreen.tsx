@@ -1,48 +1,34 @@
-import { StyleSheet, View, ScrollView, Alert, Dimensions } from 'react-native';
-import React, { useState, useRef } from 'react';
-import ScreenContainer from 'components/ScreenContainer';
+import React, { useState, useRef, useCallback } from 'react';
+import {
+  StyleSheet,
+  View,
+  Alert,
+  Dimensions,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
+import { Tabs } from 'react-native-collapsible-tab-view';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import ScreenContainer from 'components/ScreenContainer';
 import ProfileHeader from './components/ProfileHeader';
 import ProfileInfo from './components/ProfileInfo';
 import ProfileInfoTab from './components/ProfileInfoTab';
 import ProfileAlbumTab from './components/ProfileAlbumTab';
 import NavigationService from 'NavigationService';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CustomText from 'components/text/CustomText';
-import { TouchableOpacity } from 'react-native';
 
-const Tab = createMaterialTopTabNavigator();
 const TAB_PADDING = 20;
 const TAB_GAP = 12;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TAB_WIDTH = (SCREEN_WIDTH - TAB_PADDING * 2 - TAB_GAP) / 2;
 
 const DEFAULT_ALBUM_PHOTOS = [
-  {
-    id: 1,
-    image: require('assets/img_default_profile.png'),
-    isDefault: true,
-  },
-  {
-    id: 2,
-    image: require('assets/img_default_profile.png'),
-    isDefault: true,
-  },
-  {
-    id: 3,
-    image: require('assets/img_default_profile.png'),
-    isDefault: true,
-  },
-  {
-    id: 4,
-    image: require('assets/img_default_profile.png'),
-    isDefault: true,
-  },
-  {
-    id: 5,
-    image: require('assets/img_default_profile.png'),
-    isDefault: true,
-  },
+  { id: 1, image: require('assets/img_default_profile.png'), isDefault: true },
+  { id: 2, image: require('assets/img_default_profile.png'), isDefault: true },
+  { id: 3, image: require('assets/img_default_profile.png'), isDefault: true },
+  { id: 4, image: require('assets/img_default_profile.png'), isDefault: true },
+  { id: 5, image: require('assets/img_default_profile.png'), isDefault: true },
 ];
 
 const user = {
@@ -53,15 +39,58 @@ const user = {
   matches: 144,
   liking: 144,
   liked: 120,
-  bio: 'Heyyy! Tôi là 1 sinh viên đang theo học ngành lý marketing 26 tuổi. Cuốc sống của tôi là những dự án sống tạo, những chuyến đi vào và những trải nghiệm đời thực. Tô luôn tìm...',
+  bio: 'Heyyy! Tôi là 1 sinh viên đang theo học ngành lý marketing 26 tuổi. Cuộc sống của tôi là những dự án sáng tạo, những chuyến đi và những trải nghiệm đời thực. Tôi luôn tìm...',
   location: 'Sống tại Hà Nội',
+};
+
+type TabItemProps = {
+  tabName: string;
+  label: string;
+  onPress: () => void;
+  focusedTab: any;
+};
+
+const TabItem = (props: TabItemProps) => {
+  const { tabName, label, onPress, focusedTab } = props;
+  const containerStyle = useAnimatedStyle(() => {
+    const isActive = focusedTab.value === tabName;
+    return {
+      backgroundColor: isActive ? '#0786FF' : '#F5F5F5',
+    };
+  });
+
+  const activeTextStyle = useAnimatedStyle(() => {
+    return { opacity: focusedTab.value === tabName ? 1 : 0 };
+  });
+
+  const inactiveTextStyle = useAnimatedStyle(() => {
+    return { opacity: focusedTab.value === tabName ? 0 : 1 };
+  });
+
+  return (
+    <TouchableOpacity style={styles.tab} onPress={onPress} activeOpacity={0.8}>
+      <Animated.View style={[styles.tabBase, containerStyle]}>
+        <Animated.View style={[styles.textLayer, activeTextStyle]}>
+          <CustomText
+            fontStyleType="text-semibold"
+            style={styles.tabTextActive}
+          >
+            {label}
+          </CustomText>
+        </Animated.View>
+
+        <Animated.View style={[styles.textLayer, inactiveTextStyle]}>
+          <CustomText style={styles.tabText}>{label}</CustomText>
+        </Animated.View>
+      </Animated.View>
+    </TouchableOpacity>
+  );
 };
 
 const ProfileScreen = () => {
   const isPickingAlbumRef = useRef<Record<number, boolean>>({});
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [albumPhotos, setAlbumPhotos] = useState(DEFAULT_ALBUM_PHOTOS);
-
   const isPickingCoverRef = useRef(false);
 
   const handlePickCoverImage = async () => {
@@ -78,8 +107,7 @@ const ProfileScreen = () => {
       });
       if (image && image.path) setCoverImage(image.path);
     } catch (error: any) {
-      if (error && error.code === 'E_PICKER_CANCELLED') {
-      } else {
+      if (error.code !== 'E_PICKER_CANCELLED') {
         console.warn('handlePickCoverImage error:', error);
         Alert.alert('Lỗi', 'Không thể chọn ảnh bìa. Vui lòng thử lại.');
       }
@@ -127,8 +155,7 @@ const ProfileScreen = () => {
         );
       }
     } catch (error: any) {
-      if (error && error.code === 'E_PICKER_CANCELLED') {
-      } else {
+      if (error.code !== 'E_PICKER_CANCELLED') {
         console.warn('handlePickAlbumImage error:', error);
         Alert.alert('Lỗi', 'Không thể chọn ảnh. Vui lòng thử lại.');
       }
@@ -165,53 +192,48 @@ const ProfileScreen = () => {
     );
   };
 
-  const CustomTabBar = ({ state, descriptors, navigation }: any) => {
+  const renderTabBar = useCallback((props: any) => {
+    const tabNames: string[] = props.tabNames || [];
     return (
       <View style={styles.tabsContainer}>
-        {state.routes.map((route: any, index: number) => {
-          const { options } = descriptors[route.key];
-          const label = options.tabBarLabel || options.title || route.name;
-          const isFocused = state.index === index;
-
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
-
+        {tabNames.map((tabName: string) => {
+          const label = props.tabProps?.[tabName]?.label ?? tabName;
           return (
-            <TouchableOpacity
-              key={route.key}
-              style={styles.tab}
-              onPress={onPress}
-              activeOpacity={0.7}
-            >
-              {isFocused ? (
-                <View style={styles.tabActiveButton}>
-                  <CustomText
-                    fontStyleType="text-semibold"
-                    style={styles.tabTextActive}
-                  >
-                    {label}
-                  </CustomText>
-                </View>
-              ) : (
-                <View style={styles.tabInactiveButton}>
-                  <CustomText style={styles.tabText}>{label}</CustomText>
-                </View>
-              )}
-            </TouchableOpacity>
+            <TabItem
+              key={tabName}
+              tabName={tabName}
+              label={label}
+              onPress={() => props.onTabPress(tabName)}
+              focusedTab={props.focusedTab}
+            />
           );
         })}
       </View>
     );
-  };
+  }, []);
+
+  const renderHeader = useCallback(() => {
+    return (
+      <View style={styles.sharedHeaderContainer} pointerEvents="box-none">
+        <ProfileHeader
+          coverImage={coverImage}
+          avatarUrl={user.avatar}
+          onPickCoverImage={handlePickCoverImage}
+          onRemoveCoverImage={handleRemoveCoverImage}
+        />
+
+        <ProfileInfo
+          userName={user.name}
+          matches={user.matches}
+          liking={user.liking}
+          liked={user.liked}
+          onEditProfile={() => {
+            NavigationService.navigate('EditProfileScreen');
+          }}
+        />
+      </View>
+    );
+  }, [coverImage]);
 
   return (
     <ScreenContainer
@@ -222,74 +244,38 @@ const ProfileScreen = () => {
           onPress: () => console.log('Go to settings'),
         },
       ]}
-      safeBottom
     >
-      <View style={styles.wrapper}>
-        <View style={styles.headerContainer}>
-          <ProfileHeader
-            coverImage={coverImage}
-            avatarUrl={user.avatar}
-            onPickCoverImage={handlePickCoverImage}
-            onRemoveCoverImage={handleRemoveCoverImage}
-          />
+      <ScrollView contentContainerStyle={styles.wrapper}>
+        <Tabs.Container renderHeader={renderHeader} renderTabBar={renderTabBar}>
+          <Tabs.Tab name="Thông tin">
+            <Tabs.ScrollView
+              style={styles.tabContent}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            >
+              <ProfileInfoTab
+                userName={user.name}
+                age={user.age}
+                bio={user.bio}
+                location={user.location}
+              />
+            </Tabs.ScrollView>
+          </Tabs.Tab>
 
-          <ProfileInfo
-            userName={user.name}
-            matches={user.matches}
-            liking={user.liking}
-            liked={user.liked}
-            onEditProfile={() => {
-              NavigationService.navigate('EditProfileScreen');
-            }}
-          />
-        </View>
-
-        <View style={{ flex: 1 }}>
-          <Tab.Navigator
-            tabBar={props => <CustomTabBar {...props} />}
-            screenOptions={{
-              swipeEnabled: true,
-              lazy: true,
-            }}
-          >
-            <Tab.Screen
-              name="InfoTab"
-              component={() => (
-                <ScrollView
-                  style={styles.tabContent}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{ paddingBottom: 20 }}
-                >
-                  <ProfileInfoTab
-                    userName={user.name}
-                    age={user.age}
-                    bio={user.bio}
-                    location={user.location}
-                  />
-                </ScrollView>
-              )}
-              options={{ tabBarLabel: 'Thông tin' }}
-            />
-            <Tab.Screen
-              name="AlbumTab"
-              component={() => (
-                <ScrollView
-                  style={styles.tabContent}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{ paddingBottom: 20 }}
-                >
-                  <ProfileAlbumTab
-                    photos={albumPhotos}
-                    onPickImage={handlePickAlbumImage}
-                    onRemoveImage={handleRemoveAlbumImage}
-                  />
-                </ScrollView>
-              )}
-              options={{ tabBarLabel: 'Album' }}
-            />
-          </Tab.Navigator>
-        </View>
-      </View>
+          <Tabs.Tab name="Album" label="Album">
+            <Tabs.ScrollView
+              style={styles.tabContent}
+              showsVerticalScrollIndicator={false}
+            >
+              <ProfileAlbumTab
+                photos={albumPhotos}
+                onPickImage={handlePickAlbumImage}
+                onRemoveImage={handleRemoveAlbumImage}
+              />
+            </Tabs.ScrollView>
+          </Tabs.Tab>
+        </Tabs.Container>
+      </ScrollView>
     </ScreenContainer>
   );
 };
@@ -300,15 +286,9 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
   },
-  headerContainer: {
+  sharedHeaderContainer: {
     paddingVertical: 14,
-  },
-  headerScrollView: {
-    paddingVertical: 14,
-  },
-  container: {
-    flex: 1,
-    paddingVertical: 14,
+    backgroundColor: '#fff',
   },
   tabContent: {
     flex: 1,
@@ -325,20 +305,22 @@ const styles = StyleSheet.create({
   tab: {
     width: TAB_WIDTH,
   },
-  tabActiveButton: {
+  tabBase: {
     height: 34,
     borderRadius: 12,
     width: '100%',
-    backgroundColor: '#0786FF',
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
-  tabInactiveButton: {
-    height: 34,
-    borderRadius: 12,
+  textLayer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F5F5F5',
   },
   tabText: {
     fontSize: 14,

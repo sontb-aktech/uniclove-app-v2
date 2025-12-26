@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 import CustomText from 'components/text/CustomText';
 import { IconFeather } from 'libs';
+import GroupSelector from 'components/selected/GroupSelector';
+import { LIST_HOBBIES } from 'screens/survey/SurveyStep3Screen';
 
 type ProfileInfoTabProps = {
   userName: string;
@@ -45,6 +47,12 @@ const ProfileInfoTab = (props: ProfileInfoTabProps) => {
             {location}
           </CustomText>
         </View>
+      </View>
+      <View style={styles.section}>
+        <CustomText fontStyleType="title-semibold" style={styles.sectionTitle}>
+          Sở thích
+        </CustomText>
+        <GroupSelector listItems={LIST_HOBBIES} />
       </View>
     </View>
   );

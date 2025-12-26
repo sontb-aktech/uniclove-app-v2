@@ -9,7 +9,7 @@ import CustomText from 'components/text/CustomText';
 import GroupSelector from 'components/selected/GroupSelector';
 import GradientButton from 'components/button/GradientButton';
 
-const LIST_HOBBIES = [
+export const LIST_HOBBIES = [
   'Du lịch',
   'Âm nhạc',
   'Thể thao',
