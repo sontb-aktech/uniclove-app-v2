@@ -15,6 +15,9 @@ import { IconAnt } from 'libs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CardItem from './components/CardItem';
 import MainHeader from 'screens/components/MainHeader';
+import CustomText from 'components/text/CustomText';
+import useCommon from 'hooks/useCommon';
+import { logout } from 'stores/UserSlice';
 
 const data: ImageSourcePropType[] = [
   { uri: 'https://picsum.photos/id/1011/800/600' },
@@ -35,7 +38,7 @@ const MatchingScreen = () => {
   const insets = useSafeAreaInsets();
   const [swipeDirection, setSwipeDirection] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState<number>(2);
-
+  const common = useCommon();
   const renderCard = useCallback(
     (source: ImageSourcePropType, index: number) => {
       const isTop = index === activeIndex;
@@ -160,7 +163,14 @@ const MatchingScreen = () => {
       ]}
     >
       <MainHeader />
-
+      <TouchableOpacity
+        onPress={() => {
+          common.dispatch(logout());
+          common.navigate('LoginScreen');
+        }}
+      >
+        <CustomText>Logout</CustomText>
+      </TouchableOpacity>
       <View style={{ flex: 1, zIndex: 1000, marginTop: 10 }}>
         <View style={styles.subContainer}>
           <Swiper

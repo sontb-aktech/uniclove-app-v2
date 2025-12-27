@@ -24,6 +24,9 @@ const GradientButton = (props: {
           justifyContent: 'center',
           alignItems: 'center',
         },
+        props.disabled && {
+          opacity: 0.3,
+        },
         props.style,
       ]}
       onPress={props.onPress}

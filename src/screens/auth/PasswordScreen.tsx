@@ -10,31 +10,44 @@ import useStatusBar from 'hooks/useStatusBar';
 import useTheme from 'hooks/useTheme';
 import useTrans from 'hooks/useTrans';
 import LottieView from 'lottie-react-native';
-import React from 'react';
-import {Dimensions, Image, ScrollView, StyleSheet, View} from 'react-native';
+import React, { useState } from 'react';
+import { Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {login} from 'stores/UserSlice';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getUserInfo, login } from 'stores/UserSlice';
 
 const width = Dimensions.get('window').width;
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
 
 const PasswordScreen = () => {
-  const {theme, themeStyle} = useTheme();
+  const { theme, themeStyle } = useTheme();
   useStatusBar();
-  const params = useRouteParams('LoginScreen');
+  const params = useRouteParams('PasswordScreen');
+  const phone = params?.phone;
   const insets = useSafeAreaInsets();
-  const {trans} = useTrans();
+  const { trans } = useTrans();
   const common = useCommon();
-
-  const onLogin = async (type: 'apple' | 'google') => {
+  const [password, setPassword] = useState('');
+  const onLogin = async () => {
     // appOpen.preventShow();
-    const result = await common.getResultDispatch(login({type}));
+    if (!password) {
+      common.showNotice('warning', 'Vui lòng nhập mật khẩu');
+      return;
+    }
+    const result = await common.getResultDispatch(
+      login({ username: phone!, password: password }),
+    );
+    if (result) {
+      const userInfo = await common.getResultDispatch(getUserInfo());
+      if (userInfo) {
+        common.reset('MainTabScreen');
+      }
+    }
   };
 
   return (
     <ScreenContainer style={styles.container} containInput>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{ flex: 1 }}>
         <Image
           source={require('assets/img_password.png')}
           style={{
@@ -46,41 +59,56 @@ const PasswordScreen = () => {
             alignSelf: 'center',
           }}
         />
-        <CustomText fontStyleType="header-medium" style={{textAlign: 'center'}}>
+        <CustomText
+          fontStyleType="header-medium"
+          style={{ textAlign: 'center' }}
+        >
           Mật khẩu
         </CustomText>
-        <View style={{marginTop: 20, marginHorizontal: 20}}>
-          <CustomInput placeholder="Nhập mật khẩu" type="password" autoFocus />
-          <GradientButton text="Đăng nhập" style={{marginTop: 20}} />
+        <View style={{ marginTop: 20, marginHorizontal: 20 }}>
+          <CustomInput
+            placeholder="Nhập mật khẩu"
+            type="password"
+            autoFocus
+            value={password}
+            onChangeText={text => setPassword(text)}
+          />
+          <GradientButton
+            text="Đăng nhập"
+            style={{ marginTop: 20 }}
+            onPress={() => onLogin()}
+          />
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
               marginTop: 20,
               marginHorizontal: '10%',
-            }}>
+            }}
+          >
             <View
-              style={[styles.line, {backgroundColor: themeStyle.outline}]}
+              style={[styles.line, { backgroundColor: themeStyle.outline }]}
             />
             <CustomText
               style={{
                 color: themeStyle.onSurfaceVariant,
                 marginHorizontal: 16,
-              }}>
+              }}
+            >
               hoặc
             </CustomText>
             <View
-              style={[styles.line, {backgroundColor: themeStyle.outline}]}
+              style={[styles.line, { backgroundColor: themeStyle.outline }]}
             />
           </View>
           <GradientBorderButton
             text="Đăng nhập bằng mã OTP"
-            style={{marginTop: 20}}
-            onPress={() => common.navigate('VerifyOtpScreen', {phone: ''})}
+            style={{ marginTop: 20 }}
+            onPress={() => common.navigate('VerifyOtpScreen', { phone: '' })}
           />
           <TextUnderLineButton
             text="Quên mật khẩu"
-            style={{alignSelf: 'center', marginTop: 20}}
+            style={{ alignSelf: 'center', marginTop: 20 }}
           />
         </View>
       </ScrollView>

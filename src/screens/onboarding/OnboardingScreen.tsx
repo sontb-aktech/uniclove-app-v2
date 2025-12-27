@@ -11,6 +11,7 @@ import GradientButton from 'components/button/GradientButton';
 import ImageIcon from 'components/image/ImageIcon';
 import { PageIndicator } from 'react-native-page-indicator';
 import useCommon from 'hooks/useCommon';
+import UserSlice from 'stores/UserSlice';
 
 const { width: screenWidth } = Dimensions.get('window');
 const data = [
@@ -47,6 +48,7 @@ const OnboardingScreen = () => {
       setCurrentPage(currentIndexOk + 1);
     } else {
       common.navigate('LoginScreen');
+      common.dispatch(UserSlice.actions.setFirstInstall(false));
     }
   };
   return (

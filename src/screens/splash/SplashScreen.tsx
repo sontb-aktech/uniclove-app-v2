@@ -20,8 +20,8 @@ import LinearGradient from 'react-native-linear-gradient';
 // import CodePush from 'react-native-code-push';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useAppSelector } from 'stores';
-import { getConfig } from 'stores/UserSlice';
+import store, { useAppSelector } from 'stores';
+import { getConfig, getUserInfo, refreshToken } from 'stores/UserSlice';
 // const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
 const width = Dimensions.get('window').width;
 const imageWidth = (width * 2) / 3;
@@ -33,13 +33,11 @@ const SplashScreen = () => {
   // console.log('--- appOpenAds', appOpenAds);
 
   const { trans, langCode } = useTrans();
-  const [bannerAdDone, setBannerAdDone] = useState(true);
-  const [initDataDone, setInitDataDone] = useState(false);
-  const [preloadAdDone, setPreloadAdDone] = useState(false);
   const insets = useSafeAreaInsets();
-  const userStore = useAppSelector(state => state.user);
-  const firstInstall = userStore.firstInstall;
-  const userInfo = userStore.userInfo;
+  // const { accessToken, userInfo, firstInstall } = useAppSelector(
+  //   state => state.user,
+  // );
+  const [isInitedData, setIsInitedData] = useState(false);
   // let didShowApp = useRef(false);
   const [updatingStr, setUpdatingStr] = useState('');
   const version = useVersion();
@@ -59,22 +57,43 @@ const SplashScreen = () => {
 
   useEffect(() => {
     showApp();
-  }, []);
+  }, [isInitedData]);
 
   const initData = async () => {
     try {
-      if (!userInfo) {
-      }
+      await Promise.all([
+        common.getResultDispatch(getConfig()),
+        common.getResultDispatch(refreshToken()),
+      ]);
     } catch {
     } finally {
-      setInitDataDone(true);
+      setIsInitedData(true);
     }
   };
 
   const showApp = async () => {
-    setTimeout(() => {
-      common.reset('MainTabScreen');
-    }, 2000);
+    if (isInitedData) {
+      const { firstInstall, accessToken, userInfo } = store.getState().user;
+      if (firstInstall) {
+        common.reset('OnboardingScreen');
+      } else {
+        if (accessToken) {
+          if (userInfo) {
+            common.reset('MainTabScreen');
+            common.getResultDispatch(getUserInfo());
+          } else {
+            const result = await common.getResultDispatch(getUserInfo());
+            if (result) {
+              common.reset('MainTabScreen');
+            } else {
+              common.reset('LoginScreen');
+            }
+          }
+        } else {
+          common.reset('LoginScreen');
+        }
+      }
+    }
   };
 
   return (

@@ -67,14 +67,7 @@ type ImageType = {
 
 type ConfigType = {
   android_version_code: number;
-  tracking_login: string;
-  show_admob_banner: number;
   ios_version_name: string;
   appReview: boolean;
   emails_admin: string[];
-  admobChecking: boolean;
-  ads_inter_expired_sec: number;
-  ads_inter_interval_sec: number;
-  ads_native_expired_sec: number;
-  ads_show_app_open: boolean;
 };

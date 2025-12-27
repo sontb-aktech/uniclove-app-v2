@@ -16,7 +16,7 @@ import ImageIcon from 'components/image/ImageIcon';
 
 const CustomInput = (
   props: TextInputProps & {
-    style?: ViewStyle;
+    style?: ViewStyle | ViewStyle[];
     textStyle?: TextStyle;
     type?: 'password' | 'phone';
     fontStyleType?: CustomFontStyleType;
@@ -87,7 +87,7 @@ const CustomInput = (
       </View>
       {!!props.isError && (
         <CustomText
-          fontStyleType="title-semibold"
+          fontStyleType="small-regular"
           style={{ marginTop: 8, color: themeStyle.error, fontStyle: 'italic' }}
         >
           {props.textError ?? '*Không được để trống thông tin này'}

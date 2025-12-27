@@ -113,6 +113,7 @@ const ModalSingleSelect = (props: Props) => {
                     },
                   ]}
                   key={index}
+                  onPress={() => props.onSelectedIndex(index)}
                 >
                   <CustomText style={{ flex: 1 }}>{item}</CustomText>
                   <RatioButton isSelected={isSelected} />

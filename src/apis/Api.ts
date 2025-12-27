@@ -1,5 +1,6 @@
-import {safety_settings_gemini} from 'utils/Common';
-import RequestHelper, {qerystring} from './RequestHelper';
+import { safety_settings_gemini } from 'utils/Common';
+import RequestHelper, { qerystring } from './RequestHelper';
+import Configs from 'configs';
 
 export const API_TYPESENSE = {
   host: {
@@ -8,6 +9,15 @@ export const API_TYPESENSE = {
     test: 'https://c0ieaqfog9k6n85vp-1.a1.typesense.net/',
   },
   searchUser: 'collections/Users/documents/search',
+};
+
+export const DEFAULT_API = {
+  host: Configs.DEFAULT_API_URL,
+  user_check_user_exists: '/services/uaa/public-api/v1/user/check-user-exists',
+  login: '/oauth/login',
+  unic_love_user: '/services/uaa/api/v1/unic-love-user',
+  refresh_token: '/oauth/refresh-token',
+  create_user: '/services/uaa/public-api/v1/user/create-user',
 };
 
 const Api = () => {
@@ -19,19 +29,47 @@ const Api = () => {
 
   return {
     cancel,
-    searchUser: (keyword: string) => {
-      return request.get(
-        API_TYPESENSE.host,
-        API_TYPESENSE.searchUser,
-        {
-          q: keyword,
-          query_by: 'name,email',
-          page: 0,
-          per_page: 20,
+    user_check_user_exists: (params: CheckUserExistParams) => {
+      return request.request({
+        host: DEFAULT_API.host,
+        url: DEFAULT_API.user_check_user_exists,
+        query: params,
+        options: { disableNoti: true, ignoreAccessToken: true },
+      });
+    },
+    login: (params: LoginParams) => {
+      return request.request({
+        host: DEFAULT_API.host,
+        url: DEFAULT_API.login,
+        method: 'post',
+        data: params,
+        options: { ignoreAccessToken: true },
+      });
+    },
+    unic_love_user: (id: string) => {
+      return request.request({
+        host: DEFAULT_API.host,
+        url: DEFAULT_API.unic_love_user,
+        query: { id },
+      });
+    },
+    refresh_token: (refreshToken: string) => {
+      return request.request({
+        host: DEFAULT_API.host,
+        url: DEFAULT_API.refresh_token,
+        method: 'post',
+        data: {
+          refreshToken,
         },
-        undefined,
-        {'X-TYPESENSE-API-KEY': 'rfsZxJndOxtr3qd7F1ra6j9S5WXU614J'},
-      );
+      });
+    },
+    create_user: (params: CreateUserParams) => {
+      return request.request({
+        host: DEFAULT_API.host,
+        url: DEFAULT_API.create_user,
+        method: 'post',
+        data: params,
+      });
     },
   };
 };

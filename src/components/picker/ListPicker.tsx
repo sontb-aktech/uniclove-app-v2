@@ -60,14 +60,17 @@ const ListPicker = (props: {
         isVisible={showDateTimePicker}
         listItem={props.listItem}
         selectedIndex={props.currentIndex}
-        onSelectedIndex={props.onSelectedIndex}
+        onSelectedIndex={index => {
+          props.onSelectedIndex(index);
+          setShowDateTimePicker(false);
+        }}
         onCancel={() => setShowDateTimePicker(false)}
         showSearch
         placeHolderSearch={props.placeHolderSearch}
       />
       {!!props.isError && (
         <CustomText
-          fontStyleType="title-semibold"
+          fontStyleType="text-regular"
           style={{ marginTop: 8, color: themeStyle.error, fontStyle: 'italic' }}
         >
           {props.textError ?? '*Không được để trống thông tin này'}

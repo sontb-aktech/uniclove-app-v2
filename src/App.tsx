@@ -1,29 +1,35 @@
-import {CacheManager} from '@georstat/react-native-image-cache';
+import { CacheManager } from '@georstat/react-native-image-cache';
 import {
   DefaultTheme,
   NavigationContainer,
   NavigationState,
 } from '@react-navigation/native';
-import {LocalizationProvider} from 'LocalizationProvider';
+import 'apis/RequestRefreshTokenHelper';
+import { LocalizationProvider } from 'LocalizationProvider';
 import Nav from 'Nav';
-import {navigationRef} from 'NavigationService';
-import {ThemeProvider} from 'ThemeProvider';
+import { navigationRef } from 'NavigationService';
+import { ThemeProvider } from 'ThemeProvider';
+import LoadingGlobal from 'components/loading/LoadingGlobal';
+import Notice from 'components/notice/Notice';
+import FloatingLoggerButton from 'dev/FloatingLoggerButton';
+import NetworkLoggerOverlay from 'dev/NetworkLoggerOverlay';
+import { initNetworkLogger } from 'dev/networkLogger';
 import FirebaseAnalyticHelper from 'helpers/FirebaseAnalyticHelper';
 import FirebaseAppCheckHelper from 'helpers/FirebaseAppCheckHelper';
 import FirebaseCrashlyticHelper from 'helpers/FirebaseCrashlyticHelper';
 import GoogleSignInHelper from 'helpers/GoogleSignInHelper';
 import NotificationHelper from 'helpers/NotificationHelper';
-import React, {useEffect} from 'react';
-import {LogBox} from 'react-native';
-import {Dirs} from 'react-native-file-access';
-import {Host} from 'react-native-portalize';
+import React, { useEffect } from 'react';
+import { LogBox } from 'react-native';
+import { Dirs } from 'react-native-file-access';
+import { Host } from 'react-native-portalize';
 import {
   initialWindowMetrics,
   SafeAreaProvider,
 } from 'react-native-safe-area-context';
-import {Provider as ReduxProvider} from 'react-redux';
-import {PersistGate} from 'redux-persist/integration/react';
-import store, {persistor} from 'stores';
+import { Provider as ReduxProvider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import store, { persistor } from 'stores';
 LogBox.ignoreLogs([
   'new NativeEventEmitter',
   'ReactImageView: Image',
@@ -89,6 +95,7 @@ const App = () => {
     NotificationHelper.setupNotification();
     FirebaseAppCheckHelper.initAppCheck();
     const removeNoti = NotificationHelper.notificationListener();
+    initNetworkLogger();
     // FirebaseAppCheckHelper.getAppCheckToken();
     return () => {
       removeNoti();
@@ -113,11 +120,22 @@ const App = () => {
                     FirebaseAnalyticHelper.logScreenView(currentRoute);
                     FirebaseCrashlyticHelper.logScreen(currentRoute);
                   }
-                }}>
+                }}
+              >
                 <Host>
                   <Nav />
+                  <Notice />
+                  {true ? (
+                    <>
+                      <NetworkLoggerOverlay />
+                      <FloatingLoggerButton
+                        onPress={() => globalThis.openNetworkLogger?.()}
+                      />
+                    </>
+                  ) : null}
                 </Host>
               </NavigationContainer>
+              <LoadingGlobal />
             </LocalizationProvider>
           </ThemeProvider>
         </SafeAreaProvider>

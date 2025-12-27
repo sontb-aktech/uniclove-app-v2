@@ -7,10 +7,9 @@ const verifyUserName = (userName: string): boolean => {
 };
 
 const verifyFullName = (fullName?: string): boolean => {
-  if (!fullName) {
-    return false;
-  }
-  var nameRegex = /^[\p{L} ,.'-]+$/u;
+  if (!fullName) return false;
+
+  const nameRegex = /^[\p{L} ,.'-]{3,}$/u;
   return nameRegex.test(fullName);
 };
 
@@ -29,10 +28,8 @@ const verifyPhone = (phone?: string): boolean => {
 };
 
 const verifyPass = (pass: string): boolean => {
-  if (pass.length < 6) {
-    return false;
-  }
-  return true;
+  const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+  return pattern.test(pass);
 };
 
 const moneyFormat = (num?: string) => {

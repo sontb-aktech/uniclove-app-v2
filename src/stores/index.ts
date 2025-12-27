@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {configureStore} from '@reduxjs/toolkit';
-import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
-import {combineReducers} from 'redux';
-import {persistReducer, persistStore} from 'redux-persist';
+import { configureStore } from '@reduxjs/toolkit';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { combineReducers } from 'redux';
+import { persistReducer, persistStore } from 'redux-persist';
 import CodePushSlice from './CodePushSlice';
 import CommonSlice from './CommonSlice';
 import TransSlice from './TransSlice';
@@ -12,7 +12,7 @@ import HomeSlice from './HomeSlice';
 const persistUserConfig = {
   key: 'user',
   storage: AsyncStorage,
-  whitelist: ['userInfo'],
+  whitelist: ['userInfo', 'accessToken', 'refreshToken', 'firstInstall'],
 };
 
 const persistTransConfig = {

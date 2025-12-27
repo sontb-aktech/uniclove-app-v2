@@ -1,184 +1,80 @@
-import axios from 'axios';
+import axios, { Method } from 'axios';
 import moment from 'moment';
 // import RNFetchBlob from 'rn-fetch-blob';
-import {StoreType} from 'stores';
-import CommonSlice, {showNotice} from 'stores/CommonSlice';
+import { StoreType } from 'stores';
+import CommonSlice, { showNotice } from 'stores/CommonSlice';
 import Configs from 'configs';
 import RNFS from 'react-native-fs';
 import ReactNativeBlobUtil from 'react-native-blob-util';
-import {Platform} from 'react-native';
-import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import { Platform } from 'react-native';
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import ImageResizer from '@bam.tech/react-native-image-resizer';
 
 const RequestHelper = () => {
   const source = axios.CancelToken.source();
 
-  const get = async (
-    host: HostType,
-    url: string,
-    paramsObj?: any,
-    disableNoti?: boolean,
-    header?: {[key: string]: string},
-  ) => {
+  const request = async (params: {
+    host: string;
+    method?: Method;
+    url: string;
+    headers?: { [key: string]: string };
+    query?: { [key: string]: any };
+    data?: { [key: string]: any };
+    files?: { [key: string]: ImageType[] };
+    options?: {
+      disableNoti?: boolean;
+      ignoreAccessToken?: boolean;
+    };
+  }) => {
     const store = require('stores').default as StoreType;
 
     try {
-      let urlFull = getFulUrl(host, url, paramsObj);
+      let urlFull = getFulUrl(params.host, params.url, params.query);
       console.log('RequestHelper url = ' + urlFull);
+      let data = undefined as any;
+      if (params.files) {
+        data = new FormData();
+        for (var key in params.data) {
+          if (params.data[key]) {
+            data.append(key, params.data[key]);
+            console.log(`${key}:${params.data[key]}`);
+          }
+        }
+        for (var key in params.files) {
+          params.files[key].forEach(item => {
+            data.append(key, item);
+            console.log(`${key}:${item}`);
+          });
+        }
+      } else {
+        data = params.data;
+      }
+      const accessToken = store.getState().user.accessToken;
 
       let res: any = await axios({
-        method: 'get',
+        method: params.method ?? 'get',
         url: urlFull,
         cancelToken: source.token,
-        // headers: {
-        //   'X-TYPESENSE-API-KEY': 'rfsZxJndOxtr3qd7F1ra6j9S5WXU614J',
-        // },
+        data,
         headers: {
           'Content-Type': 'application/json',
-          // accept: 'application/json',
-          ...header,
-          // 'X-Goog-Api-Key': token,
+          ...(!params.options?.ignoreAccessToken && accessToken
+            ? { authorization: `Bearer ${accessToken}` }
+            : undefined),
+          ...params.headers,
         },
       });
 
-      console.log(res, url);
+      console.log(res, params.url);
       if (res.status.toString().startsWith('2')) {
         return res.data;
       }
-      console.log(res, 'error ' + url);
+      console.log(res, 'error ' + params.url);
       throw res;
     } catch (err: any) {
-      console.log(err, 'error ' + url);
-      handleError(err, store, disableNoti);
+      console.log(err, 'error ' + params.url);
+      handleError(err, store, params.options?.disableNoti);
       throw err;
-    }
-  };
-
-  const post = async (
-    host: HostType,
-    url: string,
-    objectPrams: any,
-    token?: string,
-    header?: {[key: string]: string},
-    timeout?: number,
-  ) => {
-    const store = require('stores').default as StoreType;
-    try {
-      // !disableLoading && store.dispatch(CommonSlice.actions.showLoading());
-      let urlFull = `${getHost(host)}${url}`;
-      console.log('RequestHelper post url = ' + urlFull);
-      console.log(JSON.stringify(objectPrams));
-      let res: any = await axios({
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          accept: 'application/json',
-          Authorization: token ? `Bearer ${token}` : undefined,
-          ...header,
-          // 'X-Goog-Api-Key': token,
-        },
-        data: objectPrams,
-        url: urlFull,
-        cancelToken: source.token,
-        timeout,
-      });
-      // console.log(res, url);
-      if (res.status == 200) {
-        return res.data;
-      }
-      throw res;
-    } catch (err: any) {
-      console.log(err, 'error ' + url);
-      handleError(err, store, false);
-      throw err;
-    } finally {
-      // !disableLoading && store.dispatch(CommonSlice.actions.closeLoading());
-    }
-  };
-
-  const postFormData = async (
-    host: HostType,
-    url: string,
-    objectPrams: any,
-    token?: string,
-    header?: {[key: string]: string},
-  ) => {
-    const store = require('stores').default as StoreType;
-    try {
-      // !disableLoading && store.dispatch(CommonSlice.actions.showLoading());
-      let urlFull = `${getHost(host)}${url}`;
-      console.log('RequestHelper postFormData url = ' + urlFull);
-      var bodyFormData = new FormData();
-      for (var key in objectPrams) {
-        if (objectPrams[key]) {
-          console.log(`${key}:${objectPrams[key]}`);
-          bodyFormData.append(key, objectPrams[key]);
-        }
-      }
-
-      let res: any = await axios({
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          // accept: 'application/json',
-          Authorization: token ? `Bearer ${token}` : undefined,
-          ...header,
-          // 'X-Goog-Api-Key': token,
-        },
-        data: bodyFormData,
-        url: urlFull,
-        cancelToken: source.token,
-      });
-      // console.log(res, url);
-      if (res.status == 200) {
-        return res.data;
-      }
-      throw res;
-    } catch (err: any) {
-      console.log(err, 'error ' + url);
-      handleError(err, store, true);
-      throw err;
-    } finally {
-      // !disableLoading && store.dispatch(CommonSlice.actions.closeLoading());
-    }
-  };
-
-  const put = async (
-    host: HostType,
-    url: string,
-    objectPrams: any,
-    disableLoading?: boolean,
-    disableNoti?: boolean,
-    headers?: any,
-  ) => {
-    const store = require('stores').default as StoreType;
-    try {
-      // !disableLoading && store.dispatch(CommonSlice.actions.showLoading());
-      let urlFull = `${getHost(host)}${url}`;
-      console.log('RequestHelper put url = ' + urlFull);
-      console.log(JSON.stringify(objectPrams));
-      let res: any = await axios({
-        method: 'PUT',
-        headers: headers
-          ? headers
-          : {
-              'Content-Type': 'application/json',
-            },
-        data: objectPrams,
-        url: urlFull,
-        cancelToken: source.token,
-      });
-      console.log(res, url);
-      if (res.status == 200) {
-        return res.data;
-      }
-      throw res;
-    } catch (err: any) {
-      console.log(err, 'error ' + url);
-      handleError(err, store, disableNoti);
-      throw err;
-    } finally {
-      // !disableLoading && store.dispatch(CommonSlice.actions.closeLoading());
     }
   };
 
@@ -192,10 +88,8 @@ const RequestHelper = () => {
     }
   };
 
-  const getFulUrl = (host?: HostType, url?: string, params?: any) => {
-    return `${host ? getHost(host) : ''}${url}${
-      params ? '?' + qerystring(params) : ''
-    }`;
+  const getFulUrl = (host?: string, url?: string, params?: any) => {
+    return `${host ? host : ''}${url}${params ? '?' + qerystring(params) : ''}`;
   };
 
   const getFromFullUrl = async (url: string, disableLoading?: boolean) => {
@@ -216,42 +110,6 @@ const RequestHelper = () => {
       throw res;
     } catch (err: any) {
       throw err;
-    } finally {
-      // !disableLoading && store.dispatch(CommonSlice.actions.closeLoading());
-    }
-  };
-
-  const remove = async (
-    host: HostType,
-    url: string,
-    objectPrams?: any,
-    disableLoading?: boolean,
-    disableNoti?: boolean,
-  ) => {
-    const store = require('stores').default as StoreType;
-    try {
-      // !disableLoading && store.dispatch(CommonSlice.actions.showLoading());
-      let urlFull = `${getHost(host)}${url}`;
-      console.log('RequestHelper post url = ' + urlFull);
-      // console.log(JSON.stringify(objectPrams));
-      let res: any = await axios({
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: objectPrams,
-        url: urlFull,
-        cancelToken: source.token,
-        // timeout: 7000,
-      });
-      console.log(res, url);
-      if (res.status == 200) {
-        return res.data;
-      }
-      throw res;
-    } catch (err: any) {
-      console.log(err, 'error ' + url);
-      handleError(err, store, disableNoti);
     } finally {
       // !disableLoading && store.dispatch(CommonSlice.actions.closeLoading());
     }
@@ -284,7 +142,7 @@ const RequestHelper = () => {
         await CameraRoll.saveAsset(result.path());
       } else if (Platform.OS === 'android') {
         let pathnew = await ReactNativeBlobUtil.MediaCollection.createMediafile(
-          {name: imageName, parentFolder: '', mimeType: 'image/jpeg'},
+          { name: imageName, parentFolder: '', mimeType: 'image/jpeg' },
           'Image',
         );
         await ReactNativeBlobUtil.MediaCollection.writeToMediafile(
@@ -333,37 +191,11 @@ const RequestHelper = () => {
     // the image is now dowloaded to device's storage
   };
 
-  const downloadAudio = async (
-    host: HostType,
-    url: string,
-    params: any,
-    token?: string,
-    headers?: any,
-  ) => {
-    let dirs = `${RNFS.CachesDirectoryPath}/${moment().valueOf()}.mp3`;
-    let urlFull = `${getHost(host)}${url}`;
-    const result = await ReactNativeBlobUtil.config({
-      fileCache: true,
-      path: dirs,
-    }).fetch(
-      'POST',
-      urlFull,
-      {
-        'Content-Type': 'application/json',
-        Authorization: token ? `Bearer ${token}` : '',
-        ...headers,
-        // 'X-Goog-Api-Key': token,
-      },
-      JSON.stringify(params),
-    );
-    return result.path();
-  };
-
   const convertImageUrlToBase64 = async (imageUrl: string) => {
     try {
       // Tải hình ảnh về bộ nhớ tạm thời
       const downloadDest = `${RNFS.TemporaryDirectoryPath}/temp.jpg`;
-      const {promise} = RNFS.downloadFile({
+      const { promise } = RNFS.downloadFile({
         fromUrl: imageUrl,
         toFile: downloadDest,
       });
@@ -377,7 +209,7 @@ const RequestHelper = () => {
         undefined,
         undefined,
         undefined,
-        {onlyScaleDown: true},
+        { onlyScaleDown: true },
       );
       // Đọc file dưới dạng base64
       const base64String = await RNFS.readFile(resizeResonse.path, 'base64');
@@ -398,18 +230,13 @@ const RequestHelper = () => {
   };
 
   return {
-    get,
-    post,
-    put,
+    request,
     cancelRequest,
     getFulUrl,
-    getHost,
+    // getHost,
     getFromFullUrl,
-    remove,
     downloadFile,
     getImagePath,
-    downloadAudio,
-    postFormData,
     convertImageUrlToBase64,
     saveBaseToDevice,
     convertUriToBase64,
@@ -426,40 +253,53 @@ export const qerystring = (paramsObj: any) => {
   return str;
 };
 
-const getHost = (host: HostType) => {
-  switch (Configs.ENV) {
-    case 'DEV':
-      return host.test;
-    case 'STD':
-      return host.std;
-    case 'PROD':
-      return host.prod;
-    default:
-      return host.test;
-  }
-};
+// const getHost = (host: HostType) => {
+//   switch (Configs.ENV) {
+//     case 'DEV':
+//       return host.test;
+//     case 'STD':
+//       return host.std;
+//     case 'PROD':
+//       return host.prod;
+//     default:
+//       return host.test;
+//   }
+// };
 
-const handleError = (err: any, store: StoreType, disableNoti?: boolean) => {
+export const handleError = (
+  err: any,
+  store: StoreType,
+  disableNoti?: boolean,
+) => {
   try {
-    let message = err?.response?.data?.message;
+    if (disableNoti) {
+      return;
+    }
+    let message = err?.response?.data?.error?.message;
     if (message) {
-      !disableNoti &&
-        store.dispatch(
-          showNotice({noticeType: 'warning', textNotice: message}),
-        );
+      store.dispatch(
+        showNotice({ noticeType: 'warning', textNotice: message }),
+      );
     } else if (err?.response?.data) {
-      !disableNoti &&
+      if (typeof err?.response?.data == 'string') {
+        store.dispatch(
+          showNotice({
+            noticeType: 'warning',
+            textNotice: err?.response?.data,
+          }),
+        );
+      } else {
         store.dispatch(
           showNotice({
             noticeType: 'warning',
             textNotice: JSON.stringify(err?.response?.data),
           }),
         );
+      }
     } else {
-      !disableNoti &&
-        store.dispatch(
-          showNotice({noticeType: 'warning', textNotice: err.message}),
-        );
+      store.dispatch(
+        showNotice({ noticeType: 'warning', textNotice: err.message }),
+      );
     }
   } catch {}
 };

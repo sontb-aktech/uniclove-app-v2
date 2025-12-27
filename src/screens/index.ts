@@ -32,11 +32,11 @@ export type RootStackParamList = {
   FriendRequestScreen: undefined;
   OnboardingScreen: undefined;
   LanguageScreen: undefined;
-  PasswordScreen: undefined;
+  PasswordScreen: { phone: string };
   VerifyOtpScreen: { phone: string };
-  CompleteProfileScreen: undefined;
-  CreatePasswordScreen: undefined;
-  CompletePictureProfileScreen: undefined;
+  CompleteProfileScreen: { phone: string; password: string };
+  CreatePasswordScreen: { phone: string };
+  CompletePictureProfileScreen: { phone: string; password: string };
   WelcomScreen: undefined;
   SurveyStep1Screen: undefined;
   SurveyStep2Screen: undefined;

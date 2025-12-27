@@ -1,5 +1,5 @@
 import useTheme from 'hooks/useTheme';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Pressable,
   TextInput,
@@ -21,6 +21,7 @@ const DatePicker = (props: {
   maxDate?: Date;
   onChangeDate?: (date: Date) => void;
   textError?: string;
+  value?: Date;
 }) => {
   const { themeStyle } = useTheme();
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
@@ -32,6 +33,12 @@ const DatePicker = (props: {
     setCurrentDate(date);
     props.onChangeDate?.(date);
   };
+
+  useEffect(() => {
+    if (props.value) {
+      setCurrentDate(props.value);
+    }
+  }, [props.value]);
 
   return (
     <View style={[props.style]}>
@@ -85,7 +92,7 @@ const DatePicker = (props: {
       />
       {!!props.isError && (
         <CustomText
-          fontStyleType="title-semibold"
+          fontStyleType="text-regular"
           style={{ marginTop: 8, color: themeStyle.error, fontStyle: 'italic' }}
         >
           {props.textError ?? '*Không được để trống thông tin này'}

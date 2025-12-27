@@ -10,31 +10,63 @@ import useStatusBar from 'hooks/useStatusBar';
 import useTheme from 'hooks/useTheme';
 import useTrans from 'hooks/useTrans';
 import LottieView from 'lottie-react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { login } from 'stores/UserSlice';
+import TextUtils from 'utils/TextUtils';
 
 const width = Dimensions.get('window').width;
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
-
+const ERROR_PASS =
+  'Mật khẩu phải có ít nhất 8 ký tự và bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt';
 const CreatePasswordScreen = () => {
   const { theme, themeStyle } = useTheme();
   useStatusBar();
-  const params = useRouteParams('LoginScreen');
+  const params = useRouteParams('CreatePasswordScreen');
   const insets = useSafeAreaInsets();
   const { trans } = useTrans();
   const common = useCommon();
+  const [password, setPassword] = useState('');
+  const [repassword, setRepassword] = useState('');
+  const [isErrorPassword, setIsErrorPassword] = useState(false);
+  const [isErrorRepassword, setIsErrorRepassword] = useState(false);
+  const [textErrorPassword, setTextErrorPassword] = useState('');
+  const [textErrorRepassword, setTextErrorRepassword] = useState('');
 
-  const onLogin = async (type: 'apple' | 'google') => {
-    // appOpen.preventShow();
-    const result = await common.getResultDispatch(login({ type }));
+  const onContinue = () => {
+    common.navigate('CompleteProfileScreen', {
+      phone: params?.phone!,
+      password,
+    });
   };
 
-  const onVerifyPassword = () => {
-    common.navigate('CompleteProfileScreen');
-  };
+  useEffect(() => {
+    if (password) {
+      const passOk = TextUtils.verifyPass(password);
+      setIsErrorPassword(!passOk);
+      if (!passOk) {
+        setTextErrorPassword(ERROR_PASS);
+      } else {
+        setTextErrorPassword('');
+      }
+    }
+  }, [password]);
+
+  useEffect(() => {
+    if (repassword) {
+      const verify = TextUtils.verifyPass(repassword);
+      setIsErrorRepassword(!(verify && password == repassword));
+      if (!verify) {
+        setTextErrorRepassword(ERROR_PASS);
+      } else if (password != repassword) {
+        setTextErrorRepassword('Mật khẩu không trùng khớp');
+      } else {
+        setTextErrorRepassword('');
+      }
+    }
+  }, [repassword]);
 
   return (
     <ScreenContainer style={styles.container} hideHeader>
@@ -59,25 +91,34 @@ const CreatePasswordScreen = () => {
         <View style={{ marginTop: 20, marginHorizontal: 20 }}>
           <FormInputGroup>
             <CustomInput
+              value={password}
+              onChangeText={text => setPassword(text)}
               placeholder="Nhập mật khẩu"
               type="password"
-              autoFocus
+              isError={isErrorPassword}
+              textError={textErrorPassword}
             />
             <CustomInput
+              value={repassword}
+              onChangeText={text => setRepassword(text)}
               placeholder="Nhập lại mật khẩu"
               type="password"
               style={{ marginTop: 16 }}
-              onSubmitEditing={onVerifyPassword}
+              isError={isErrorRepassword}
+              textError={textErrorRepassword}
             />
           </FormInputGroup>
 
           <GradientButton
             text="Tiếp tục"
             style={{ marginTop: 20 }}
+            disabled={
+              isErrorPassword || isErrorRepassword || password != repassword
+            }
             iconRight={
               <ImageIcon source={require('assets/ic_arrow_right_light.png')} />
             }
-            onPress={onVerifyPassword}
+            onPress={onContinue}
           />
         </View>
       </ScrollView>

@@ -4135,6 +4135,8 @@ __metadata:
     eslint: ^8.19.0
     jest: ^29.6.3
     jetifier: ^2.0.0
+    jwt-decode: ^4.0.0
+    libphonenumber-js: ^1.12.33
     lottie-react-native: 7.3.4
     metro-react-native-babel-preset: 0.77.0
     moment: ^2.30.1
@@ -4165,6 +4167,7 @@ __metadata:
     react-native-modal: ^13.0.2
     react-native-modal-datetime-picker: ^18.0.0
     react-native-modalize: ^2.1.1
+    react-native-network-logger: ^2.0.1
     react-native-nitro-modules: ^0.31.10
     react-native-page-indicator: ^2.4.3
     react-native-pager-view: ^8.0.0
@@ -8155,6 +8158,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jwt-decode@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "jwt-decode@npm:4.0.0"
+  checksum: 390e2edcb31a92e86c8cbdd1edeea4c0d62acd371f8a8f0a8878e499390c0ecf4c658b365c4e941e4ef37d0170e4ca650aaa49f99a45c0b9695a235b210154b0
+  languageName: node
+  linkType: hard
+
 "keyv@npm:^4.5.3":
   version: 4.5.4
   resolution: "keyv@npm:4.5.4"
@@ -8204,6 +8214,13 @@ __metadata:
     prelude-ls: ^1.2.1
     type-check: ~0.4.0
   checksum: 12c5021c859bd0f5248561bf139121f0358285ec545ebf48bb3d346820d5c61a4309535c7f387ed7d84361cf821e124ce346c6b7cef8ee09a67c1473b46d0fc4
+  languageName: node
+  linkType: hard
+
+"libphonenumber-js@npm:^1.12.33":
+  version: 1.12.33
+  resolution: "libphonenumber-js@npm:1.12.33"
+  checksum: b06c1899362ce5f3810aa16e7145e8d75287a0942a8c5c39a59d99721666ffb283a0bff63e967c5aa0f0934d47eff98166602dc360e35c063e1e35950abb0858
   languageName: node
   linkType: hard
 
@@ -10068,6 +10085,16 @@ __metadata:
     react-native: "> 0.50.0"
     react-native-gesture-handler: "> 1.0.0"
   checksum: c383c79d9397d72e285b67eb8c50e0743037bb72f0d12dc5a743ae45d092a4aa87e6fba0cd8cb8bef4ce675ffe784adb24bc996c137b4a30d9b8a882e7610c30
+  languageName: node
+  linkType: hard
+
+"react-native-network-logger@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "react-native-network-logger@npm:2.0.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 2cb24125e6f31e4ee78d2aab9f6f1131b8a82d9d1c129e4d09d649491be4f72f3107b179ce80304c60ffa816b05d0b3d4849e1d9f95eb5117386f2215504f383
   languageName: node
   linkType: hard
 

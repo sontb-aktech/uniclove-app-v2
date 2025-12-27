@@ -13,9 +13,11 @@ import React, { useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { login } from 'stores/UserSlice';
+import { checkUserExistThunk, login } from 'stores/UserSlice';
 import { GlobalStyles } from 'utils/GlobalStyles';
 import ModalSignUpRequired from './components/ModalSignUpRequired';
+import Api from 'apis/Api';
+import { formatPhoneNumber, validatePhoneWithLib } from 'utils/PhoneUtils';
 
 const width = Dimensions.get('window').width;
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
@@ -28,10 +30,46 @@ const LoginScreen = () => {
   const { trans } = useTrans();
   const common = useCommon();
   const [showModalSignup, setShowModalSignup] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [isErrorPhone, setIsErrorPhone] = useState(false);
 
-  const onLogin = async (type: 'apple' | 'google') => {
-    // appOpen.preventShow();
-    const result = await common.getResultDispatch(login({ type }));
+  const checkUserExist = async () => {
+    // if (!phone) {
+    //   common.showNotice('warning', 'Vui lòng nhập số điện thoại');
+    // }
+    const isValid = validatePhoneWithLib(phone, 'VN');
+    if (!isValid) {
+      setIsErrorPhone(true);
+      return;
+    }
+    const formatedPhone = formatPhoneNumber(phone, {
+      country: 'VN',
+      style: 'E.164',
+      noPlus: true,
+    });
+    if (!formatedPhone) {
+      return;
+    }
+    const result = await common.getResultDispatch(
+      checkUserExistThunk({ identity: formatedPhone! }),
+    );
+    if (result == true) {
+      common.navigate('PasswordScreen', { phone: formatedPhone });
+    } else if (result == false) {
+      setShowModalSignup(true);
+    }
+  };
+
+  const onGotoCreatePassword = () => {
+    setShowModalSignup(false);
+    setTimeout(() => {
+      const formatedPhone = formatPhoneNumber(phone, {
+        country: 'VN',
+        style: 'E.164',
+        noPlus: true,
+      });
+      common.navigate('CreatePasswordScreen', { phone: formatedPhone! });
+    }, 300);
   };
 
   return (
@@ -52,7 +90,7 @@ const LoginScreen = () => {
           >
             Đăng nhập để bắt đầu một chương mới ngập tràn{' '}
             <CustomText
-              style={{ color: themeStyle.primary }}
+              style={{ color: '#FF41A9' }}
               fontStyleType="header-bold"
             >
               tình yêu
@@ -62,7 +100,10 @@ const LoginScreen = () => {
             <View
               style={[
                 styles.countryCodeContainer,
-                { backgroundColor: themeStyle.primaryContainer },
+                {
+                  backgroundColor: themeStyle.primaryContainer,
+                  alignSelf: 'baseline',
+                },
               ]}
             >
               <CustomText>VN +84</CustomText>
@@ -71,6 +112,13 @@ const LoginScreen = () => {
               placeholder="Nhập số điện thoại"
               style={{ flex: 1, marginLeft: 8 }}
               keyboardType="phone-pad"
+              value={phone}
+              onChangeText={text => {
+                setPhone(text);
+                setIsErrorPhone(false);
+              }}
+              isError={isErrorPhone}
+              textError="Số điện thoại không hợp lệ"
             />
           </View>
           <GradientButton
@@ -78,7 +126,8 @@ const LoginScreen = () => {
             style={{ marginTop: 20 }}
             onPress={() => {
               // common.navigate('PasswordScreen');
-              setShowModalSignup(true);
+              // setShowModalSignup(true);
+              checkUserExist();
             }}
           />
           <View
@@ -152,12 +201,7 @@ const LoginScreen = () => {
       <ModalSignUpRequired
         isVisible={showModalSignup}
         onCancel={() => setShowModalSignup(false)}
-        onSubmit={() => {
-          setShowModalSignup(false);
-          setTimeout(() => {
-            common.navigate('CreatePasswordScreen');
-          }, 300);
-        }}
+        onSubmit={onGotoCreatePassword}
       />
     </ScreenContainer>
   );

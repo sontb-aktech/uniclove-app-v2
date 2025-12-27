@@ -1,6 +1,6 @@
 import CustomText from 'components/text/CustomText';
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View, ViewStyle} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 import RatioButton from './RatioButton';
 import useTheme from 'hooks/useTheme';
 
@@ -9,15 +9,16 @@ const GroupRatio = (props: {
   listItems: string[];
   currentIndex?: number;
   label?: string;
-  isError?: string;
+  isError?: boolean;
+  textError?: string;
   onPressItem?: (index: number) => void;
 }) => {
-  const {themeStyle} = useTheme();
+  const { themeStyle } = useTheme();
 
   return (
     <View style={[props.style]}>
       {!!props.label && (
-        <CustomText fontStyleType="title-semibold" style={{marginBottom: 0}}>
+        <CustomText fontStyleType="title-semibold" style={{ marginBottom: 0 }}>
           {props.label}
         </CustomText>
       )}
@@ -31,21 +32,33 @@ const GroupRatio = (props: {
                   backgroundColor: props.isError
                     ? themeStyle.errorContainer
                     : themeStyle.primaryContainer,
-                  borderColor: themeStyle.primary,
-                  borderWidth: props.currentIndex == index ? 1 : 0,
+                  borderColor: props.isError
+                    ? themeStyle.error
+                    : themeStyle.primary,
+                  borderWidth:
+                    props.currentIndex == index || props.isError ? 1 : 0,
                 },
               ]}
               key={index}
-              onPress={() => props.onPressItem?.(index)}>
+              onPress={() => props.onPressItem?.(index)}
+            >
               <CustomText>{item}</CustomText>
               <RatioButton
                 isSelected={props.currentIndex == index}
-                style={{marginLeft: 16}}
+                style={{ marginLeft: 16 }}
               />
             </TouchableOpacity>
           );
         })}
       </View>
+      {!!props.isError && (
+        <CustomText
+          fontStyleType="text-regular"
+          style={{ marginTop: 8, color: themeStyle.error, fontStyle: 'italic' }}
+        >
+          {props.textError ?? '*Vui lòng chọn ít nhất một mục'}
+        </CustomText>
+      )}
     </View>
   );
 };
@@ -57,7 +70,8 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flexDirection: 'row',
-    paddingVertical: 16,
+    alignItems: 'center',
+    paddingVertical: 12,
     paddingHorizontal: 12,
     marginRight: 16,
     marginTop: 8,
